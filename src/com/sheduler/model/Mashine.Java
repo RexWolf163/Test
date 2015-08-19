@@ -4,11 +4,11 @@ package com.scheduler.model;
  * */
 public class Mashine {
 	/**Идентификатор*/
-	private String id = new String();
+	private String id;
 	/**Модель*/
-	private String type = new String();
+	private String type;
 	/**Статус (время в минутах от начала расписания, до которого станок занят)*/
-	private int busy = 0;
+	private int busy;
 	
 	/**Запрос данных об id */
 	public String get_id() {return id;}
