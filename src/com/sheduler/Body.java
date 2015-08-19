@@ -16,24 +16,24 @@ import model.Operation;
 import model.Worker;
 
 public class Body {
-	private static List<Mashine> Models;		
-	private static List<Worker> Workers;		
-	private static List<Operation> Operations;
-	private static BufferedReader br;
-	private static List<String> Records = new ArrayList<String>();
-	private static int Current =0;
-	private static int WorkTime=0;
-	private static Date date1 = new Date();
-	private static Date date2 = new Date();
+	public static List<Mashine> Models;		
+	public static List<Worker> Workers;		
+	public static List<Operation> Operations;
+	public static BufferedReader br;
+	public static List<String> Records = new ArrayList<String>();
+	public static int Current =0;
+	public static int WorkTime=0;
+	public static Date date1 = new Date();
+	public static Date date2 = new Date();
 	
 	public static int Loading(boolean debag){//Загрузка данных из файлов
-		private int result=0;
+		int result=0;
 		
-		private String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
-		private String[] s = {"",""}; //оперативная строковая переменная
+		String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
+		String[] s = {"",""}; //оперативная строковая переменная
 		
-		private int b=0;
-		private int WaitNum=0;//количество "ожидающих" операций (просто для статистики)
+		int b=0;
+		int WaitNum=0;//количество "ожидающих" операций (просто для статистики)
 		
 		for (String Load:files){
 			try {
@@ -121,8 +121,8 @@ public class Body {
 	}
 	
 	public static void Check(){// проверка соответствий названий агрегатов и профессий
-		private int i=0;
-		private int j=0;
+		int i=0;
+		int j=0;
 		for (Worker Worker:Workers)
 			for (String mash:Worker.getMash()){
 				i=1;
@@ -170,10 +170,10 @@ public class Body {
 	
 	public static Date RDate(boolean debag){//считываем дату с клавиатуры
 
-		private br=new BufferedReader(new InputStreamReader(System.in));
-		private SimpleDateFormat format = new SimpleDateFormat();
+		br=new BufferedReader(new InputStreamReader(System.in));
+		SimpleDateFormat format = new SimpleDateFormat();
 		format.applyPattern("dd.MM.yyyy");
-		private Date date= new Date();
+		Date date= new Date();
 		try {
 			String h="";
 			if (!debag) h=br.readLine();
@@ -208,7 +208,7 @@ public class Body {
          		работника. Ее время вычитается из занятости. 
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
          */
-		private int i=0;
+		int i=0;
 		for (Operation Op:Operations){
 			if (Wor.getProf().equals(Op.getProf())){
 				if (Wor.getMash().indexOf(Op.getMash())!=-1){
@@ -223,7 +223,7 @@ public class Body {
 	}
 	
 	public static boolean DropPool(Worker Wor){//Сброс лишней операции из пула
-		private boolean bool=true;
+		boolean bool=true;
 		for (int IDOp:Wor.getPool()){
 			//System.out.println(IDOp +"-"+Operations.get(IDOp).Pretendents);
 			if (Operations.get(IDOp).getPretendents()>1){
@@ -254,9 +254,9 @@ public class Body {
          		работника. Ее время вычитается из занятости. 
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
          */
-        private int BiggerTime = 0;
-        private int BiggerID=-1;
-        private int i=0;
+        int BiggerTime = 0;
+        int BiggerID=-1;
+        int i=0;
         // первичное распределение операций
         for (Worker Wor:Workers){
         	FillPool(Wor);
@@ -268,7 +268,7 @@ public class Body {
         }
         
         //отказ от спорных операций
-        private boolean fin=false;
+        boolean fin=false;
         while(!fin){
         	//проверка количества претендентов на операцию
         	fin=true;
@@ -291,10 +291,10 @@ public class Body {
 	}
 	
 	public static int RefreshWork(){
-		private int j=0;
-		private int TimeStamp=WorkTime+1;
-		private boolean bool=true;
-		private boolean skip=false;
+		int j=0;
+		int TimeStamp=WorkTime+1;
+		boolean bool=true;
+		boolean skip=false;
 		for (Worker Wor:Workers){
 				if ((Wor.getWorkTime()<=Current)&&(Wor.getWorkId()!=-1)){
 					Wor.removePool(Wor.getPool().indexOf(Wor.getWorkId()));
@@ -353,8 +353,8 @@ public class Body {
 		После этого работнику назначается станок. При недоступности станка, берется следующая операция в пуле. Проверяется
 		наличие зависимости ("цепочки")
 		*/
-		private int j=0;
-		private int W=-1;
+		int j=0;
+		int W=-1;
 		for (Worker Wor:Workers){
 			W=-1;
 			for (int i=0;i < Wor.getPool().size();i++){
@@ -393,9 +393,9 @@ public class Body {
 	}
 	
 	public static String DateTrans(int M){//переведем абстрактные минуты в точное время. Считаем началом дня 8:00, конец 17:00, а обед 12:00-13:00
-		private int Days=Math.floorDiv(M, 8*60);
-		private int Hours=Math.floorDiv(M-Days*8*60, 60)+8;
-		private int Minutes=M-Days*8*60-(Hours-8)*60;
+		int Days=Math.floorDiv(M, 8*60);
+		int Hours=Math.floorDiv(M-Days*8*60, 60)+8;
+		int Minutes=M-Days*8*60-(Hours-8)*60;
 		if (Hours>=12)Hours+=1;
 
 		Calendar NDate = Calendar.getInstance();
@@ -412,7 +412,7 @@ public class Body {
 	public static void main(String[] args) {
 		
 		//Загрузка данных из файлов
-		private int WaitNum=Loading(false);
+		int WaitNum=Loading(false);
 		
 		System.out.println("\nНайдено "+WaitNum +" сцепленных операций"
 				+ "\n--------------------------------------------------\n"
