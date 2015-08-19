@@ -19,13 +19,12 @@ public class Operation {
 	 * Для каждой операции в связанной цепочке процессов, удельный вес берется как (Суммарная стоимость/Суммарная длительность)*/
 	private int weight;
 	/**Время начала выполнения операции*/
-	private int start;
+	private Integer start;
 	/**Количество рабочих, претендующих на данную операцию*/
 	private int pretendents;
 	
 	public Operation(){
 		this.time = 1;
-		this.start = -1;
 	}
 	
 	/**Запрос данных об id */
