@@ -1,5 +1,6 @@
-package com.scheduler.model;
+package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Данные работников.
@@ -11,9 +12,9 @@ public class Worker {
 	/**Профессия*/
 	private String prof;
 	/**Список доступных для работы моделей станков*/
-	private List<String> mash;
+	private ArrayList<String> mash;
 	/**Список отобранных операций (хранится номер в списке операций)*/
-	private List<Integer> pool;
+	private ArrayList<Integer> pool;
 	/**Граница занятости в минутах от начала расчета расписания*/
 	private int workTime;
 	/**Номер текущей операции в списке операций*/
@@ -24,6 +25,9 @@ public class Worker {
 	
 	public Worker(){
 		this.WorkId=-1;
+		this.mash=new ArrayList<String>();
+		this.pool=new ArrayList<Integer>();
+		
 	}
 	
 	/**Запрос данных об id */
