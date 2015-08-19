@@ -42,7 +42,7 @@ public class Operation {
 	/**Запрос данных об weight */
 	public int getWeight(){return this.weight;}
 	/**Запрос данных об start */
-	public int getStart(){return this.start;}
+	public Integer getStart(){return this.start;}
 	/**Запрос данных об pretendents */
 	public int getPretendents(){return this.pretendents;}
 
