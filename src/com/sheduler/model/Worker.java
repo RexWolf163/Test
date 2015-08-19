@@ -52,13 +52,18 @@ public class Worker {
 	/**Добавление данных в pool */
 	public int addPool(int data){
 		this.pool.add(data);
-		return this.pool.size();}
+		return this.pool.size();
+	}
 	/**Удаление задачи из pool*/
 	public int removePool(int data){
 		this.pool.remove(data);
 		return this.pool.size();
 	}
-	/**Корректировка данных workTime */
+	/**Корректирование записи в pool*/
+	public int setPool(int index, int element){
+		this.pool.set(index,element);
+		return this.pool.size();
+	}
 	public void setWorkTime(int data){this.workTime=data;}
 	/**Корректировка данных WorkId */
 	public void setWorkId(int data){this.WorkId=data;}
