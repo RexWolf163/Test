@@ -1,3 +1,4 @@
+package com.scheduler.model;
 /** id, Тип и состояние станка (рабочего места)
  *@version 0.2
  * */
@@ -10,16 +11,17 @@ public class Mashine {
 	private int busy = 0;
 	
 	/**Запрос данных об id */
-	public String getId() {return id;}
+	public String get_id() {return id;}
 	/**Корректировка id */
-	public void setI(String data) {this.id=data;}
+	public void set_id(String data) {this.id=data;}
 	/**Запрос данных об типе*/
-	public String getType() {return type;}
+	public String get_type() {return type;}
 	/**Корректировка типа */
-	public void setType(String data) {this.type=data;}
+	public void set_type(String data) {this.type=data;}
 	/**Запрос данных об статусе*/
-	public int getBusy() {return busy;}
+	public int get_busy() {return busy;}
 	/**Корректировка статуса */
-	public void setBusy(int data) {this.busy=data;}
+	public void set_busy(int data) {this.busy=data;}
 
 }
+
