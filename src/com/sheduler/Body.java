@@ -11,30 +11,32 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import model.Mashine;
+import model.Operation;
+import model.Worker;
+
 public class Body {
-	static List<Mashine> Models = new ArrayList<Mashine>();		
-	static List<Worker> Workers = new ArrayList<Worker>();		
-	static List<Operation> Operations = new ArrayList<Operation>();
-	static BufferedReader br = null;
-	static List<String> Records = new ArrayList<String>();
-	static int Current =0;
-	static int WorkTime=0;
-	static Date date1 = new Date();
-	static Date date2 = new Date();
+	private static List<Mashine> Models;		
+	private static List<Worker> Workers;		
+	private static List<Operation> Operations;
+	private static BufferedReader br;
+	private static List<String> Records = new ArrayList<String>();
+	private static int Current =0;
+	private static int WorkTime=0;
+	private static Date date1 = new Date();
+	private static Date date2 = new Date();
 	
 	public static int Loading(boolean debag){//Загрузка данных из файлов
-		int result=0;
+		private int result=0;
 		
-		String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
-		String[] s = {"",""}; //оперативная строковая переменная
+		private String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
+		private String[] s = {"",""}; //оперативная строковая переменная
 		
-		int b=0;
-		int WaitNum=0;//количество "ожидающих" операций (просто для статистики)
+		private int b=0;
+		private int WaitNum=0;//количество "ожидающих" операций (просто для статистики)
 		
 		for (String Load:files){
-
 			try {
-
 				String sCurrentLine;
 				int i=0;
 				b+=1;		
@@ -51,34 +53,34 @@ public class Body {
 								for (int k = 1; k <= Integer.valueOf(s[1]); k++){
 									i+=1;
 									Models.add(new Mashine());
-									Models.get(i-1).Type=s[0];
-									Models.get(i-1).ID="(id M"+i+")"+s[0];
+									Models.get(i-1).setType(s[0]);
+									Models.get(i-1).setId("(id M"+i+")"+s[0]);
 									}
 								break;
 							}
 							case 2:{
 								Workers.add(new Worker());
-								Workers.get(i-1).ID="(id W"+i+") "+s[0];
-								Workers.get(i-1).Prof=s[1];
+								Workers.get(i-1).setId("(id W"+i+") "+s[0]);
+								Workers.get(i-1).setProf(s[1]);
 								for (String mash:s[2].split("`")){
-									Workers.get(i-1).Mash.add(mash);
+									Workers.get(i-1).addMash(mash);
 								}
 								break;
 							}
 							case 3:{
 								Operations.add(new Operation());
-								Operations.get(i-1).ID="(id Op"+i+") "+s[0];
-								Operations.get(i-1).Prof=s[2];
-								Operations.get(i-1).Mash=s[1];
-								Operations.get(i-1).Cost=Integer.valueOf(s[4]);
-								Operations.get(i-1).Time=Integer.valueOf(s[3]);
-								Operations.get(i-1).Weight=Math.round(100*Operations.get(i-1).Cost/Operations.get(i-1).Time);
+								Operations.get(i-1).setId("(id Op"+i+") "+s[0]);
+								Operations.get(i-1).setProf(s[2]);
+								Operations.get(i-1).setMash(s[1]);
+								Operations.get(i-1).setCost(Integer.valueOf(s[4]));
+								Operations.get(i-1).setTime(Integer.valueOf(s[3]));
+								Operations.get(i-1).setWeight(Math.round(100*Operations.get(i-1).getCost()/Operations.get(i-1).getTime()));
 								if (s.length==6)
 									if (s[5].equals("#")){
 										WaitNum+=1;
-										Operations.get(i-1).Wait=true;
-										Operations.get(i-2).Weight=Math.round((Operations.get(i-2).Weight+Operations.get(i-1).Weight)/2);
-										Operations.get(i-1).Weight=Operations.get(i-2).Weight;
+										Operations.get(i-1).setWait(true);
+										Operations.get(i-2).setWeight(Math.round((Operations.get(i-2).getWeight()+Operations.get(i-1).getWeight())/2));
+										Operations.get(i-1).setWeight(Operations.get(i-2).getWeight());
 									}
 								
 								break;
@@ -106,48 +108,48 @@ public class Body {
 			{System.out.println("Загружены данные:"
 				+ "\nОборудование:");
 			for (Mashine Model : Models) {
-				System.out.println(Model.ID+" - "+Model.Type);}
+				System.out.println(Model.getId()+" - "+Model.getType());}
 			System.out.println("Работники:");
 			for (Worker Worker : Workers) {
-				System.out.println(Worker.ID+" ("+Worker.Prof+" - "+Worker.Mash+")");}
+				System.out.println(Worker.getId()+" ("+Worker.getProf()+" - "+Worker.getMash()+")");}
 			System.out.println("Поставленные задачи:");
 			for (Operation Operation : Operations) {
-				System.out.println(Operation.ID+" ("+Operation.Prof+" - "+Operation.Mash+"/ "+Operation.Time+"мин - "+Operation.Cost +"рублей)");}
+				System.out.println(Operation.getId()+" ("+Operation.getProf()+" - "+Operation.getMash()+"/ "+Operation.getTime()+"мин - "+Operation.getCost() +"рублей)");}
 			}
 		result=WaitNum;
 		return result;
 	}
 	
 	public static void Check(){// проверка соответствий названий агрегатов и профессий
-		int i=0;
-		int j=0;
+		private int i=0;
+		private int j=0;
 		for (Worker Worker:Workers)
-			for (String mash:Worker.Mash){
+			for (String mash:Worker.getMash()){
 				i=1;
 				for (Mashine Model:Models)
-					if (Model.Type.equals(mash)) i=0;
-				if(i==1) {System.out.println("Оборудование указаное в записи "+Worker.ID+" "+Worker.Mash+" в базе данных не обнаружено");
+					if (Model.getType().equals(mash)) i=0;
+				if(i==1) {System.out.println("Оборудование указаное в записи "+Worker.getId()+" "+Worker.getMash()+" в базе данных не обнаружено");
 					j=1;
 				}
 		}
 		for (Operation Operation:Operations){
 			i=1;
 			for (Mashine Model:Models)
-				if (Model.Type.equals(Operation.Mash)) i=0;
-			if(i==1) {System.out.println("Оборудование указаное в записи "+Operation.ID+" "+Operation.Mash+" в базе данных не обнаружено");
+				if (Model.getType().equals(Operation.getMash())) i=0;
+			if(i==1) {System.out.println("Оборудование указаное в записи "+Operation.getId()+" "+Operation.getMash()+" в базе данных не обнаружено");
 				j=1;
 			}
 		}
 		for (Operation Operation:Operations){
 			i=1;
 			for (Worker Worker:Workers)
-				if (Worker.Prof.equals(Operation.Prof)) i=0;
-			if(i==1) {System.out.println("Профессия указаная в записи "+Operation.ID+" "+Operation.Prof+" среди персонала не встречается");
+				if (Worker.getProf().equals(Operation.getProf())) i=0;
+			if(i==1) {System.out.println("Профессия указаная в записи "+Operation.getId()+" "+Operation.getProf()+" среди персонала не встречается");
 				j=1;
 			}
 		}
 		for (Operation Operation:Operations){
-			if (Operation.Wait) {
+			if (Operation.getWait()) {
 				if (i==1) {
 					i=2;
 					System.out.println("Обнаружена цепочка длиной более двух операций");
@@ -168,10 +170,10 @@ public class Body {
 	
 	public static Date RDate(boolean debag){//считываем дату с клавиатуры
 
-		br=new BufferedReader(new InputStreamReader(System.in));
-		SimpleDateFormat format = new SimpleDateFormat();
+		private br=new BufferedReader(new InputStreamReader(System.in));
+		private SimpleDateFormat format = new SimpleDateFormat();
 		format.applyPattern("dd.MM.yyyy");
-		Date date= new Date();
+		private Date date= new Date();
 		try {
 			String h="";
 			if (!debag) h=br.readLine();
@@ -206,13 +208,13 @@ public class Body {
          		работника. Ее время вычитается из занятости. 
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
          */
-		int i=0;
+		private int i=0;
 		for (Operation Op:Operations){
-			if (Wor.Prof.equals(Op.Prof)){
-				if (Wor.Mash.indexOf(Op.Mash)!=-1){
-					Wor.WorkTime+=Op.Time;
-					Op.Pretendents+=1;
-					Wor.Pool.add(i);
+			if (Wor.getProf().equals(Op.getProf())){
+				if (Wor.getMash().indexOf(Op.getMash())!=-1){
+					Wor.setWorkTime(Wor.getWorkTime()+Op.getTime());
+					Op.setPretendents(Op.getPretendents()+1);
+					Wor.addPool(i);
 				}
 			}
 		i+=1;	
@@ -221,17 +223,17 @@ public class Body {
 	}
 	
 	public static boolean DropPool(Worker Wor){//Сброс лишней операции из пула
-		boolean bool=true;
-		for (int IDOp:Wor.Pool){
+		private boolean bool=true;
+		for (int IDOp:Wor.getPool()){
 			//System.out.println(IDOp +"-"+Operations.get(IDOp).Pretendents);
-			if (Operations.get(IDOp).Pretendents>1){
-				//System.out.println("!"+Wor.WorkTime);
+			if (Operations.get(IDOp).getPretendents()>1){
+				//System.out.println("!"+Wor.getWorkTime());
 				bool=false;
-				Wor.WorkTime-=Operations.get(IDOp).Time;
-				//System.out.println("!"+Wor.WorkTime);
+				Wor.setWorkTime(Wor.getWorkTime()-Operations.get(IDOp).getTime());
+				//System.out.println("!"+Wor.getWorkTime());
 
-				Wor.Pool.remove(Wor.Pool.indexOf(IDOp));
-				Operations.get(IDOp).Pretendents-=1;
+				Wor.removePool(Wor.getPool().indexOf(IDOp));
+				Operations.get(IDOp).setPretendents(Operations.get(IDOp).getPretendents()-1);
 				break;
 			}
 		}
@@ -252,35 +254,35 @@ public class Body {
          		работника. Ее время вычитается из занятости. 
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
          */
-        int BiggerTime = 0;
-        int BiggerID=-1;
-        int i=0;
+        private int BiggerTime = 0;
+        private int BiggerID=-1;
+        private int i=0;
         // первичное распределение операций
         for (Worker Wor:Workers){
         	FillPool(Wor);
-        	if (BiggerTime<Wor.WorkTime){
-        		BiggerTime=Wor.WorkTime;
+        	if (BiggerTime<Wor.getWorkTime()){
+        		BiggerTime=Wor.getWorkTime();
         		BiggerID=i;
         	}
         	i+=1;
         }
         
         //отказ от спорных операций
-        boolean fin=false;
+        private boolean fin=false;
         while(!fin){
         	//проверка количества претендентов на операцию
         	fin=true;
         	for (Operation Op:Operations){
-        		if (Op.Pretendents>1) fin=false;
-        		//System.out.println(Op.ID+"*"+Op.Pretendents);
+        		if (Op.getPretendents()>1) fin=false;
+        		//System.out.println(Op.getId()+"*"+Op.Pretendents);
         	}
-        	Workers.get(BiggerID).Fin=DropPool(Workers.get(BiggerID)); //сброс операции от самого занятого
+        	Workers.get(BiggerID).setFin(DropPool(Workers.get(BiggerID))); //сброс операции от самого занятого
         	BiggerTime=0;//и обнуление переменнных
        		BiggerID=-1;
         	i=0;
             for (Worker Wor:Workers){//ищем следующего "жадину"
-            	if ((!Wor.Fin)&&(BiggerTime<Wor.WorkTime)){
-            		BiggerTime=Wor.WorkTime;
+            	if ((!Wor.getFin())&&(BiggerTime<Wor.getWorkTime())){
+            		BiggerTime=Wor.getWorkTime();
             		BiggerID=i;
             	}
             	i+=1;
@@ -289,31 +291,26 @@ public class Body {
 	}
 	
 	public static int RefreshWork(){
-		int j=0;
-		int TimeStamp=WorkTime+1;
-		boolean bool=true;
-		boolean skip=false;
+		private int j=0;
+		private int TimeStamp=WorkTime+1;
+		private boolean bool=true;
+		private boolean skip=false;
 		for (Worker Wor:Workers){
-			//if (Wor.Pool.size()>0){
-			//System.out.println(Wor.ID+"   "+Wor.WorkTime +" "+ Current);
-				if ((Wor.WorkTime<=Current)&&(Wor.WorkID!=-1)){
-					//System.out.print("Complete work   ");
-					Wor.Pool.remove(Wor.Pool.indexOf(Wor.WorkID));
-					Wor.WorkID=-1;
-					//System.out.println(Wor.ID+"   "+Wor.WorkID +"!!!"+ Current);
+				if ((Wor.getWorkTime()<=Current)&&(Wor.getWorkId()!=-1)){
+					Wor.removePool(Wor.getPool().indexOf(Wor.getWorkId()));
+					Wor.setWorkId(-1);
 				}
-				//System.out.println(Wor.WorkID);
 				j=0;
 				bool=true;
 				
-				while((bool)&&(Wor.WorkTime<=Current)){
-					if (j==Wor.Pool.size()) break;
+				while((bool)&&(Wor.getWorkTime()<=Current)){
+					if (j==Wor.getPool().size()) break;
 					skip=false;
 					//System.out.println("Check2");
-					if (Operations.get(Wor.Pool.get(j)).Wait){
-						//System.out.println("Check3 ==>"+Operations.get(Wor.Pool.get(j)-1).Start+" * "+Operations.get(Wor.Pool.get(j)-1).Start+"=="+Operations.get(Wor.Pool.get(j)-1).Time);
+					if (Operations.get(Wor.getPool().get(j)).getWait()){
+						//System.out.println("Check3 ==>"+Operations.get(Wor.getPool().get(j)-1).getStart()+" * "+Operations.get(Wor.getPool().get(j)-1).getStart()+"=="+Operations.get(Wor.getPool().get(j)-1).getTime());
 						skip=true;
-						if ((Operations.get(Wor.Pool.get(j)-1).Start!=-1)&&(Current>=(Operations.get(Wor.Pool.get(j)-1).Start+Operations.get(Wor.Pool.get(j)-1).Time))){
+						if ((Operations.get(Wor.getPool().get(j)-1).getStart()!=-1)&&(Current>=(Operations.get(Wor.getPool().get(j)-1).getStart()+Operations.get(Wor.getPool().get(j)-1).getTime()))){
 							skip=false;
 							//System.out.println("Check4");
 						}
@@ -321,16 +318,17 @@ public class Body {
 					
 					if (!skip){
 						for (Mashine Mod:Models){
-							//System.out.println("Srch:"+Wor.ID+Mod.ID+"for"+Operations.get(Wor.Pool.get(j)).ID+"    :"+Current);
-							if ((Mod.Busy<=Current)&&(Mod.Type.equals(Operations.get(Wor.Pool.get(j)).Mash))){
+							//System.out.println("Srch:"+Wor.getId()+Mod.getId()+"for"+Operations.get(Wor.getPool().get(j)).getId()+"    :"+Current);
+							if ((Mod.getBusy()<=Current)&&(Mod.getType().equals(Operations.get(Wor.getPool().get(j)).getMash()))){
 								//System.out.println("Find");
-								Wor.WorkTime=Mod.Busy=Operations.get(Wor.Pool.get(j)).Time+Current;
-								Wor.WorkID=Wor.Pool.get(j);
-								Operations.get(Wor.Pool.get(j)).Start=Current;
-								Records.add(DateTrans(Current)+" по "+DateTrans(Wor.WorkTime)+" =>"+Wor.ID+" занимает "+Mod.ID+ " для "+ Operations.get(Wor.Pool.get(j)).ID);
+								Wor.setWorkTime(Operations.get(Wor.getPool().get(j)).getTime()+Current);
+								Mod.setBusy(Operations.get(Wor.getPool().get(j)).getTime()+Current);
+								Wor.setWorkId(Wor.getPool().get(j));
+								Operations.get(Wor.getPool().get(j)).setStart(Current);
+								Records.add(DateTrans(Current)+" по "+DateTrans(Wor.getWorkTime())+" =>"+Wor.getId()+" занимает "+Mod.getId()+ " для "+ Operations.get(Wor.getPool().get(j)).getId());
 								//System.out.println(Records.get(Records.size()-1));
 								bool=false;
-								//if (TimeStamp>Wor.WorkTime) TimeStamp=Wor.WorkTime;
+								//if (TimeStamp>Wor.getWorkTime()) TimeStamp=Wor.WorkTime;
 								break;
 							}
 						}
@@ -340,7 +338,7 @@ public class Body {
 			//}
 		}
 		for (Worker Wor:Workers){
-			if((Wor.WorkID!=-1)&&(Wor.Pool.size()>0)&&(TimeStamp>Wor.WorkTime)) TimeStamp=Wor.WorkTime;
+			if((Wor.getWorkId()!=-1)&&(Wor.getPool().size()>0)&&(TimeStamp>Wor.getWorkTime())) TimeStamp=Wor.getWorkTime();
 		}
 		
 		return TimeStamp;
@@ -355,28 +353,27 @@ public class Body {
 		После этого работнику назначается станок. При недоступности станка, берется следующая операция в пуле. Проверяется
 		наличие зависимости ("цепочки")
 		*/
-		int j=0;
-		int W=-1;
+		private int j=0;
+		private int W=-1;
 		for (Worker Wor:Workers){
 			W=-1;
-			for (int i=0;i < Wor.Pool.size();i++){
-				//System.out.println(W+" "+i+Wor.Pool);
-				if ((W!=-1)&&(W<Operations.get(Wor.Pool.get(i)).Weight)){
-					j=Wor.Pool.get(i-1);
-					Wor.Pool.set(i-1,Wor.Pool.get(i));
-					Wor.Pool.set(i, j);
+			for (int i=0;i < Wor.getPool().size();i++){
+				if ((W!=-1)&&(W<Operations.get(Wor.getPool().get(i)).getWeight())){
+					j=Wor.getPool().get(i-1);
+					Wor.setPool(i-1,Wor.getPool().get(i));
+					Wor.setPool(i, j);
 					i-=2;
 					if (i<0)i=0;
 				}
-				W=Operations.get(Wor.Pool.get(i)).Weight;
+				W=Operations.get(Wor.getPool().get(i)).getWeight();
 			}
 		}
 		
 		//Очистка переменных от распределения, для учета
 		for (Worker Wor:Workers){
 			j=0;
-			Wor.WorkTime=0;
-			Wor.WorkID=-1;
+			Wor.setWorkTime(0);
+			Wor.setWorkId(-1);
 		}
 		
 		//сортировка завершена.
@@ -387,20 +384,18 @@ public class Body {
 			Current=RefreshWork();
 			bool=true;
 			for (Worker Wor:Workers)
-				if (Wor.Pool.size()>0) {
-					//System.out.println(Wor.Pool.size());
+				if (Wor.getPool().size()>0) {
 					bool=false;
 					break;
 				}
 			if ((bool)||(Current>WorkTime)) break;
 		}
-		//System.out.println(step);
 	}
 	
 	public static String DateTrans(int M){//переведем абстрактные минуты в точное время. Считаем началом дня 8:00, конец 17:00, а обед 12:00-13:00
-		int Days=Math.floorDiv(M, 8*60);
-		int Hours=Math.floorDiv(M-Days*8*60, 60)+8;
-		int Minutes=M-Days*8*60-(Hours-8)*60;
+		private int Days=Math.floorDiv(M, 8*60);
+		private int Hours=Math.floorDiv(M-Days*8*60, 60)+8;
+		private int Minutes=M-Days*8*60-(Hours-8)*60;
 		if (Hours>=12)Hours+=1;
 
 		Calendar NDate = Calendar.getInstance();
@@ -417,7 +412,7 @@ public class Body {
 	public static void main(String[] args) {
 		
 		//Загрузка данных из файлов
-		int WaitNum=Loading(false);
+		private int WaitNum=Loading(false);
 		
 		System.out.println("\nНайдено "+WaitNum +" сцепленных операций"
 				+ "\n--------------------------------------------------\n"
@@ -460,30 +455,30 @@ public class Body {
 			W=-1;
 			for (int i=0;i < Workers.size();i++){
 				//System.out.println(W+" "+i+Wor.Pool);
-				if ((W!=-1)&&(W>Workers.get(i).Mash.size())){
+				if ((W!=-1)&&(W>Workers.get(i).getMash().size())){
 					j=Workers.get(i-1);
 					Workers.set(i-1,Workers.get(i));
 					Workers.set(i, j);
 					i-=2;
 					if (i<0)i=0;
 				}
-				W=Workers.get(i).Mash.size();
+				W=Workers.get(i).getMash().size();
 			}
 
 	        Operation z=new Operation();
 				W=-1;
 				for (int i=0;i < Operations.size();i++){
 					//System.out.println(W+" "+i+Wor.Pool);
-					if ((W!=-1)&&(W<Operations.get(i).Weight)){
+					if ((W!=-1)&&(W<Operations.get(i).getWeight())){
 						z=Operations.get(i-1);
 						Operations.set(i-1,Operations.get(i));
 						Operations.set(i, z);
 						i-=2;
 						if (i<0)i=0;
 					}
-					W=Operations.get(i).Weight;
+					W=Operations.get(i).getWeight();
 				}
-				//for(Operation Wor:Operations) System.out.println(Wor.ID+"\t"+Wor.Weight);
+				//for(Operation Wor:Operations) System.out.println(Wor.getId()+"\t"+Wor.getWeight());
 
         
         
@@ -515,9 +510,9 @@ public class Body {
                 out.println("-------------------------------------------------------------");
                 out.println("Не выполнено:");
                 for(Operation Op:Operations){
-                	if (((Op.Start+Op.Time)>WorkTime)||(Op.Start==-1)){
-                		System.out.println(Op.ID+"\tДолжно начаться "+DateTrans(Op.Start)+"\tСтоимость"+Op.Cost+"\tДлительность"+Op.Time+"мин");
-                		out.println(Op.ID+"\tДолжно начаться "+DateTrans(Op.Start)+"\tСтоимость"+Op.Cost+"\tДлительность"+Op.Time+"мин");
+                	if (((Op.getStart()+Op.getTime())>WorkTime)||(Op.getStart()==null)){
+                		System.out.println(Op.getId()+"\tДолжно начаться "+DateTrans(Op.getStart())+"\tСтоимость"+Op.getCost()+"\tДлительность"+Op.getTime()+"мин");
+                		out.println(Op.getId()+"\tДолжно начаться "+DateTrans(Op.getStart())+"\tСтоимость"+Op.getCost()+"\tДлительность"+Op.getTime()+"мин");
                 	}
                 }
             	
@@ -527,16 +522,5 @@ public class Body {
         } catch(IOException e) {
             throw new RuntimeException(e);
         }
-
-/*    //DEBUG info
-        //System.out.println(Current);
-        for (String R:Records){
-        	System.out.println(R);
-        }
-        System.out.println("Не выполнено:");
-        for(Operation Op:Operations){
-        	if (((Op.Start+Op.Time)>WorkTime)||(Op.Start==-1))System.out.println(Op.ID+"\tДолжно начаться "+DateTrans(Op.Start)+"\tСтоимость"+Op.Cost+"\tДлительность "+Op.Time+"мин");
-        }*/
-       
 	}
 }
