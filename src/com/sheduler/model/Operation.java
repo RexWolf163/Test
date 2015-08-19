@@ -1,4 +1,4 @@
-package com.scheduler.model;
+package model;
 /** Описание задачи.
  *@version 0.2
  * */
@@ -47,22 +47,22 @@ public class Operation {
 	public int getPretendents(){return this.pretendents;}
 
 	/**Корректировка данных id */
-	public void getId(String data){this.id=data;}
+	public void setId(String data){this.id=data;}
 	/**Корректировка данных prof */
-	public void getProf(String data){this.prof=data;}
+	public void setProf(String data){this.prof=data;}
 	/**Корректировка данных mash */
-	public void getMash(String data){this.mash=data;}
+	public void setMash(String data){this.mash=data;}
 	/**Корректировка данных cost */
-	public void getCost(int data){this.cost=data;}
+	public void setCost(int data){this.cost=data;}
 	/**Корректировка данных time */
-	public void getTime(int data){this.time=data;}
+	public void setTime(int data){this.time=data;}
 	/**Корректировка данных id */
-	public void getWait(boolean data){this.wait=data;}
+	public void setWait(boolean data){this.wait=data;}
 	/**Корректировка данных weight */
-	public void getWeight(int data){this.weight=data;}
+	public void setWeight(int data){this.weight=data;}
 	/**Корректировка данных start */
-	public void getStart(int data){this.start=data;}
+	public void setStart(int data){this.start=data;}
 	/**Корректировка данных pretendents */
-	public void getPretendents(int data){this.pretendents=data;}
-
+	public void setPretendents(int data){this.pretendents=data;}
+	
 }
