@@ -16,9 +16,9 @@ import model.Operation;
 import model.Worker;
 
 public class Body {
-	public static List<Mashine> Models;		
-	public static List<Worker> Workers;		
-	public static List<Operation> Operations;
+	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
+	public static ArrayList<Worker> Workers = new ArrayList<Worker>();		
+	public static ArrayList<Operation> Operations = new ArrayList<Operation>();
 	public static BufferedReader br;
 	public static List<String> Records = new ArrayList<String>();
 	public static int Current =0;
@@ -310,7 +310,7 @@ public class Body {
 					if (Operations.get(Wor.getPool().get(j)).getWait()){
 						//System.out.println("Check3 ==>"+Operations.get(Wor.getPool().get(j)-1).getStart()+" * "+Operations.get(Wor.getPool().get(j)-1).getStart()+"=="+Operations.get(Wor.getPool().get(j)-1).getTime());
 						skip=true;
-						if ((Operations.get(Wor.getPool().get(j)-1).getStart()!=-1)&&(Current>=(Operations.get(Wor.getPool().get(j)-1).getStart()+Operations.get(Wor.getPool().get(j)-1).getTime()))){
+						if ((Operations.get(Wor.getPool().get(j)-1).getStart()!=null)&&(Current>=(Operations.get(Wor.getPool().get(j)-1).getStart()+Operations.get(Wor.getPool().get(j)-1).getTime()))){
 							skip=false;
 							//System.out.println("Check4");
 						}
