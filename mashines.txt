@@ -1,1 +1,3 @@
-
+AMD	3
+Intel	1
+XXX	2
