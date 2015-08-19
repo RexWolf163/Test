@@ -1,6 +1,5 @@
 package com.scheduler.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Данные работников.
