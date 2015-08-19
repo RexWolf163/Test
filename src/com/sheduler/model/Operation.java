@@ -23,7 +23,7 @@ public class Operation {
 	/**Количество рабочих, претендующих на данную операцию*/
 	private int pretendents;
 	
-	Operation(){
+	public Operation(){
 		this.time = 1;
 		this.start = -1;
 	}
