@@ -4,24 +4,29 @@ package com.scheduler.model;
  * */
 public class Operation {
 	/**Идентификатор*/
-	private String id = new String();
+	private String id;
 	/**Требуемая профессия*/
-	private String prof = new String();
+	private String prof;
 	/**Требуемая модель станка*/
-	private String mash = new String();
+	private String mash;
 	/**Стоимость выполненной работы*/
-	private int cost = 0;
+	private int cost;
 	/**времязатраты операции*/
-	private int time = 1;
+	private int time;
 	/**Флаг "ведомой" операции. Ставится, если операция не может быть выполнена до завершения предыдущей*/
-	private boolean wait=false;
+	private boolean wait;
 	/**Удельный вес операции Стоимость/Время (коп/минуту). Операции с более высоким весом имеют приоритет. 
 	 * Для каждой операции в связанной цепочке процессов, удельный вес берется как (Суммарная стоимость/Суммарная длительность)*/
-	private int weight=0;
+	private int weight;
 	/**Время начала выполнения операции*/
-	private int start = -1;
+	private int start;
 	/**Количество рабочих, претендующих на данную операцию*/
-	private int pretendents=0;
+	private int pretendents;
+	
+	Operation(){
+		this.time = 1;
+		this.start = -1;
+	}
 	
 	/**Запрос данных об id */
 	public String getId(){return this.id;}
