@@ -8,20 +8,24 @@ import java.util.List;
  * */
 public class Worker {
 	/**Идентификатор*/
-	private String id = new String();
+	private String id;
 	/**Профессия*/
-	private String prof = new String();
+	private String prof;
 	/**Список доступных для работы моделей станков*/
-	private List<String> mash = new ArrayList<String>();
+	private List<String> mash;
 	/**Список отобранных операций (хранится номер в списке операций)*/
-	private List<Integer> pool = new ArrayList<Integer>();
+	private List<Integer> pool;
 	/**Граница занятости в минутах от начала расчета расписания*/
-	private int workTime=0;
+	private int workTime;
 	/**Номер текущей операции в списке операций*/
-	private int WorkId = -1;
+	private int WorkId;
 	/**Флаг, показывающий статус распределения операций. 
 	 * Если для всех операций в списке pool количество претендентов равно 1, то fin=true*/
-	private boolean fin= false;
+	private boolean fin;
+	
+	public Worker(){
+		this.WorkId=-1;
+	}
 	
 	/**Запрос данных об id */
 	public String getId(){return this.id;}
