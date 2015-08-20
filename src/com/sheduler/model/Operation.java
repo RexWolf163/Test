@@ -1,4 +1,4 @@
-package model;
+package com.scheduler.model;
 /** Описание задачи.
  *@version 0.2
  * */
