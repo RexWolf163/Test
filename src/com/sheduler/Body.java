@@ -12,10 +12,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.scheduler.model.Mashine;
 import com.scheduler.model.Operation;
 import com.scheduler.model.Worker;
+
+import static com.rw.util.Print.*;
+import static com.rw.util.Range.*;
 
 public class Body {
 	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
@@ -32,56 +36,52 @@ public class Body {
 		int result=0;
 		
 		String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
-		String[] s = {"",""}; //оперативная строковая переменная
+		String[] stroke; //оперативная строковая переменная
 		
-		int b=0;
-		int WaitNum=0;//количество "ожидающих" операций (просто для статистики)
+		int WaitNum = 0;//количество "ожидающих" операций (просто для статистики)
 		
 		for (String Load:files){
 			try {
 				String sCurrentLine;
-				int i=0;
-				b+=1;		
+				int i=0;	
 				br = new BufferedReader(new FileReader(Load));
 				
 				while ((sCurrentLine = br.readLine()) != null) {
 					i+=1;
-					
-					s=sCurrentLine.split("\t");
-					if (s[0].length()!=0) {
-						switch (b){
-							case 1:{
-								i-=1;
-								for (int k = 1; k <= Integer.valueOf(s[1]); k++){
-									i+=1;
+					stroke=sCurrentLine.split("\t");
+					if (stroke[0].length()!=0) {
+						switch (Load){
+							case "mashines.txt":{
+								for (int k : range(i, Integer.valueOf(stroke[1])+i)){
 									Mashine objMashine=new Mashine();
-									objMashine.setType(s[0]);
-									objMashine.setId("(id M"+i+")"+s[0]);
+									objMashine.setType(stroke[0]);
+									objMashine.setId("(id M"+k+")"+stroke[0]);
 									Models.add(objMashine);
 									}
+								i+=Integer.valueOf(stroke[1])-1;
 								break;
 							}
-							case 2:{
+							case "workers.txt":{
 								Worker objWorker = new Worker();
-								objWorker.setId("(id W"+i+") "+s[0]);
-								objWorker.setProf(s[1]);
-								for (String mash:s[2].split("`")){
+								objWorker.setId("(id W"+i+") "+stroke[0]);
+								objWorker.setProf(stroke[1]);
+								for (String mash:stroke[2].split("`")){
 									objWorker.addMash(mash);
 								}
 								Workers.add(objWorker);								
 								break;
 							}
-							case 3:{
+							case "Operations.txt":{
 								Operation objOperation = new Operation();
-								objOperation.setId("(id Op"+i+") "+s[0]);
-								objOperation.setProf(s[2]);
-								objOperation.setMash(s[1]);
-								objOperation.setCost(Integer.valueOf(s[4]));
-								objOperation.setTime(Integer.valueOf(s[3])); 
+								objOperation.setId("(id Op"+i+") "+stroke[0]);
+								objOperation.setProf(stroke[2]);
+								objOperation.setMash(stroke[1]);
+								objOperation.setCost(Integer.valueOf(stroke[4]));
+								objOperation.setTime(Integer.valueOf(stroke[3])); 
 								objOperation.setWeight(Math.round(100*objOperation.getCost()/objOperation.getTime()));
 								Operations.add(objOperation);
-								if (s.length==6)
-									if (s[5].equals("#")){
+								if (stroke.length==6)
+									if (stroke[5].equals("#")){
 										WaitNum+=1;
 										Operations.get(i-1).setWait(true);
 										Operations.get(i-2).setWeight(Math.round((Operations.get(i-2).getWeight()+Operations.get(i-1).getWeight())/2));
@@ -97,7 +97,7 @@ public class Body {
 
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("Файл данных не найден");
+				println("Файл данных не найден");
 				System.exit(0);
 			} finally {
 				try {
@@ -110,16 +110,16 @@ public class Body {
 		}
 		//немного информации
 		if (debag)
-			{System.out.println("Загружены данные:"
+			{println("Загружены данные:"
 				+ "\nОборудование:");
 			for (Mashine Model : Models) {
-				System.out.println(Model.getId()+" - "+Model.getType());}
-			System.out.println("Работники:");
+				printfln("%s - %s",Model.getId(),Model.getType());}
+			println("Работники:");
 			for (Worker Worker : Workers) {
-				System.out.println(Worker.getId()+" ("+Worker.getProf()+" - "+Worker.getMash()+")");}
-			System.out.println("Поставленные задачи:");
+				printfln("%s (%s - %s)",Worker.getId(),Worker.getProf(),Worker.getMash());}
+			println("Поставленные задачи:");
 			for (Operation Operation : Operations) {
-				System.out.println(Operation.getId()+" ("+Operation.getProf()+" - "+Operation.getMash()+"/ "+Operation.getTime()+"мин - "+Operation.getCost() +"рублей)");}
+				printfln("%s (%s - %s/ %sмин - %sрублей)",Operation.getId(),Operation.getProf(),Operation.getMash(),Operation.getTime(),Operation.getCost());}
 			}
 		result=WaitNum;
 		return result;
@@ -133,7 +133,7 @@ public class Body {
 				i=1;
 				for (Mashine Model:Models)
 					if (Model.getType().equals(mash)) i=0;
-				if(i==1) {System.out.println("Оборудование указаное в записи "+Worker.getId()+" "+Worker.getMash()+" в базе данных не обнаружено");
+				if(i==1) {println("Оборудование указаное в записи "+Worker.getId()+" "+Worker.getMash()+" в базе данных не обнаружено");
 					j=1;
 				}
 		}
@@ -141,7 +141,7 @@ public class Body {
 			i=1;
 			for (Mashine Model:Models)
 				if (Model.getType().equals(Operation.getMash())) i=0;
-			if(i==1) {System.out.println("Оборудование указаное в записи "+Operation.getId()+" "+Operation.getMash()+" в базе данных не обнаружено");
+			if(i==1) {println("Оборудование указаное в записи "+Operation.getId()+" "+Operation.getMash()+" в базе данных не обнаружено");
 				j=1;
 			}
 		}
@@ -149,7 +149,7 @@ public class Body {
 			i=1;
 			for (Worker Worker:Workers)
 				if (Worker.getProf().equals(Operation.getProf())) i=0;
-			if(i==1) {System.out.println("Профессия указаная в записи "+Operation.getId()+" "+Operation.getProf()+" среди персонала не встречается");
+			if(i==1) {println("Профессия указаная в записи "+Operation.getId()+" "+Operation.getProf()+" среди персонала не встречается");
 				j=1;
 			}
 		}
@@ -157,7 +157,7 @@ public class Body {
 			if (Operation.getWait()) {
 				if (i==1) {
 					i=2;
-					System.out.println("Обнаружена цепочка длиной более двух операций");
+					println("Обнаружена цепочка длиной более двух операций");
 					j=1;
 					break;
 				}
@@ -166,9 +166,9 @@ public class Body {
 			else i=0;
 		}
 		
-		if (j==0) System.out.println("Проблемы не обнаружены");
+		if (j==0) println("Проблемы не обнаружены");
 		else {
-			System.out.println("Расчет окончен по ошибке в данных");
+			println("Расчет окончен по ошибке в данных");
 			System.exit(0);
 		}		
 	}
@@ -188,7 +188,7 @@ public class Body {
 				date= format.parse(h);
 			} catch (ParseException e) {
 				//e.printStackTrace();
-				System.out.println("Неправильно введена дата");
+				println("Неправильно введена дата");
 				System.exit(0);
 			}
 		} catch (IOException e) {
@@ -230,12 +230,12 @@ public class Body {
 	public static boolean DropPool(Worker Wor){//Сброс лишней операции из пула
 		boolean bool=true;
 		for (int IDOp:Wor.getPool()){
-			//System.out.println(IDOp +"-"+Operations.get(IDOp).Pretendents);
+			//println(IDOp +"-"+Operations.get(IDOp).Pretendents);
 			if (Operations.get(IDOp).getPretendents()>1){
-				//System.out.println("!"+Wor.getWorkTime());
+				//println("!"+Wor.getWorkTime());
 				bool=false;
 				Wor.setWorkTime(Wor.getWorkTime()-Operations.get(IDOp).getTime());
-				//System.out.println("!"+Wor.getWorkTime());
+				//println("!"+Wor.getWorkTime());
 
 				Wor.removePool(Wor.getPool().indexOf(IDOp));
 				Operations.get(IDOp).setPretendents(Operations.get(IDOp).getPretendents()-1);
@@ -279,7 +279,7 @@ public class Body {
         	fin=true;
         	for (Operation Op:Operations){
         		if (Op.getPretendents()>1) fin=false;
-        		//System.out.println(Op.getId()+"*"+Op.Pretendents);
+        		//println(Op.getId()+"*"+Op.Pretendents);
         	}
         	Workers.get(BiggerID).setFin(DropPool(Workers.get(BiggerID))); //сброс операции от самого занятого
         	BiggerTime=0;//и обнуление переменнных
@@ -311,27 +311,27 @@ public class Body {
 				while((bool)&&(Wor.getWorkTime()<=Current)){
 					if (j==Wor.getPool().size()) break;
 					skip=false;
-					//System.out.println("Check2");
+					//println("Check2");
 					if (Operations.get(Wor.getPool().get(j)).getWait()){
-						//System.out.println("Check3 ==>"+Operations.get(Wor.getPool().get(j)-1).getStart()+" * "+Operations.get(Wor.getPool().get(j)-1).getStart()+"=="+Operations.get(Wor.getPool().get(j)-1).getTime());
+						//println("Check3 ==>"+Operations.get(Wor.getPool().get(j)-1).getStart()+" * "+Operations.get(Wor.getPool().get(j)-1).getStart()+"=="+Operations.get(Wor.getPool().get(j)-1).getTime());
 						skip=true;
 						if ((Operations.get(Wor.getPool().get(j)-1).getStart()!=null)&&(Current>=(Operations.get(Wor.getPool().get(j)-1).getStart()+Operations.get(Wor.getPool().get(j)-1).getTime()))){
 							skip=false;
-							//System.out.println("Check4");
+							//println("Check4");
 						}
 					}		
 					
 					if (!skip){
 						for (Mashine Mod:Models){
-							//System.out.println("Srch:"+Wor.getId()+Mod.getId()+"for"+Operations.get(Wor.getPool().get(j)).getId()+"    :"+Current);
+							//println("Srch:"+Wor.getId()+Mod.getId()+"for"+Operations.get(Wor.getPool().get(j)).getId()+"    :"+Current);
 							if ((Mod.getBusy()<=Current)&&(Mod.getType().equals(Operations.get(Wor.getPool().get(j)).getMash()))){
-								//System.out.println("Find");
+								//println("Find");
 								Wor.setWorkTime(Operations.get(Wor.getPool().get(j)).getTime()+Current);
 								Mod.setBusy(Operations.get(Wor.getPool().get(j)).getTime()+Current);
 								Wor.setWorkId(Wor.getPool().get(j));
 								Operations.get(Wor.getPool().get(j)).setStart(Current);
 								Records.add(DateTrans(Current)+" по "+DateTrans(Wor.getWorkTime())+" =>"+Wor.getId()+" занимает "+Mod.getId()+ " для "+ Operations.get(Wor.getPool().get(j)).getId());
-								//System.out.println(Records.get(Records.size()-1));
+								//println(Records.get(Records.size()-1));
 								bool=false;
 								//if (TimeStamp>Wor.getWorkTime()) TimeStamp=Wor.WorkTime;
 								break;
@@ -417,16 +417,17 @@ public class Body {
 	public static void main(String[] args) {
 		
 		//Загрузка данных из файлов
-		int WaitNum=Loading(false);
+		int WaitNum=Loading(true);
 		
-		System.out.println("\nНайдено "+WaitNum +" сцепленных операций"
+		printfln("\nНайдено %s сцепленных операций"
 				+ "\n--------------------------------------------------\n"
-				+ "Проверка корректности данных");	
+				+ "Проверка корректности данных",
+				WaitNum);	
 		
 		// проверка соответствий названий агрегатов и профессий
 		Check();
 
-		System.out.println("Проверка корректности данных завершена"
+		println("Проверка корректности данных завершена"
 				+ "\n--------------------------------------------------\n\n\n"
 				+ "Введите дату начала расчета в формате ДД.ММ.ГГГГ");
 		
@@ -435,19 +436,18 @@ public class Body {
         
 		date1=RDate(false);
 		
-        System.out.println("\nВведите дату конца расчета");
+        println("\nВведите дату конца расчета");
         
         date2=RDate(false);
         
         if (date2.getTime()<date1.getTime()){
-        	System.out.println("Конец расчета должен быть позже начала!");
+        	println("Конец расчета должен быть позже начала!");
         	System.exit(0);
         }
         //наверняка есть способ проще, но я его не знаю. так что будем считать количество дней "вручную"
-
         long Days = 1+Math.abs(date1.getTime()-date2.getTime())/(1000*60*60*24);
-        System.out.println("\nПланирование производится на "+Days+" дней ("+Days*8*60+" рабочих минут)"
-        		+ "\n\n");
+        printfln("\nПланирование производится на %s дней (%s рабочих минут)"
+        		+ "\n\n", Days, Days*8*60);
         
         WorkTime = (int) Days*8*60;//рабочий период (пригодится)
         
@@ -458,8 +458,7 @@ public class Body {
 		int W=0;
         Worker j=new Worker();
 			W=-1;
-			for (int i=0;i < Workers.size();i++){
-				//System.out.println(W+" "+i+Wor.Pool);
+			for (int i:range(Workers.size())){
 				if ((W!=-1)&&(W>Workers.get(i).getMash().size())){
 					j=Workers.get(i-1);
 					Workers.set(i-1,Workers.get(i));
@@ -472,8 +471,8 @@ public class Body {
 
 	        Operation z=new Operation();
 				W=-1;
-				for (int i=0;i < Operations.size();i++){
-					//System.out.println(W+" "+i+Wor.Pool);
+				for (int i:range(Operations.size())){
+					//println(W+" "+i+Wor.Pool);
 					if ((W!=-1)&&(W<Operations.get(i).getWeight())){
 						z=Operations.get(i-1);
 						Operations.set(i-1,Operations.get(i));
@@ -483,7 +482,7 @@ public class Body {
 					}
 					W=Operations.get(i).getWeight();
 				}
-				//for(Operation Wor:Operations) System.out.println(Wor.getId()+"\t"+Wor.getWeight());
+				//for(Operation Wor:Operations) println(Wor.getId()+"\t"+Wor.getWeight());
 
         
         
@@ -501,23 +500,21 @@ public class Body {
             if(!file.exists()){
                 file.createNewFile();
             }
-
             PrintWriter out = new PrintWriter(file.getAbsoluteFile());
-     
             try {
-            	out.println("Расписание составляется на период с "+DateTrans(0)+" по "+DateTrans(WorkTime-1));
-            	out.println("");
+            	filePrintf(out,"Расписание составляется на период с %s по %s",DateTrans(0),DateTrans(WorkTime-1));
+            	filePrintf(out,"");
                 for (String R:Records){
-                	System.out.println(R);
-                	out.println(R);
+                	println(R);
+                	filePrintf(out,R);
                 }
-                System.out.println("Не выполнено:");
-                out.println("-------------------------------------------------------------");
-                out.println("Не выполнено:");
+                println("Не выполнено:");
+                filePrintf(out,"-------------------------------------------------------------");
+                filePrintf(out,"Не выполнено:");
                 for(Operation Op:Operations){
                 	if (((Op.getStart()+Op.getTime())>WorkTime)||(Op.getStart()==null)){
-                		System.out.println(Op.getId()+"\tДолжно начаться "+DateTrans(Op.getStart())+"\tСтоимость"+Op.getCost()+"\tДлительность"+Op.getTime()+"мин");
-                		out.println(Op.getId()+"\tДолжно начаться "+DateTrans(Op.getStart())+"\tСтоимость"+Op.getCost()+"\tДлительность"+Op.getTime()+"мин");
+                		printfln("%s \tДолжно начаться %s \tСтоимость %sруб \tДлительность %sмин",Op.getId(),DateTrans(Op.getStart()),Op.getCost(),Op.getTime());
+                		filePrintf(out,"%s \tДолжно начаться %s \tСтоимость %sруб \tДлительность %sмин",Op.getId(),DateTrans(Op.getStart()),Op.getCost(),Op.getTime());
                 	}
                 }
             	
