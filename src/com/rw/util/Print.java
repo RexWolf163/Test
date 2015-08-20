@@ -2,7 +2,8 @@ package com.rw.util;
 import java.io.*;
 /**Коллекция упрощенных вызовов функций вывода на печать*/
 public class Print {
-  // Print with a newline:
+
+// Print with a newline:
 	/**Вывод текста без переноса строки
 	 * @param obj Текстовая строка*/
 	public static void print(Object obj) {
@@ -31,4 +32,11 @@ public class Print {
   	printfln(String format, Object... args) {
  		return System.out.printf(format+"\n", args);
  	}
+ 	/**Вывод текста в файл. Инициацию параметра PrintWriter проводить в теле основной программы
+ 	 * @param file PrintWriter привязанный к файлу
+	 * @param format Формат вывода
+	 * @param args Текстовые строка*/
+	public static void filePrintf(PrintWriter file, String format, Object... args) throws FileNotFoundException{
+		file.println(String.format(format, args));
+	}
 }
