@@ -13,9 +13,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import model.Mashine;
-import model.Operation;
-import model.Worker;
+import com.scheduler.model.Mashine;
+import com.scheduler.model.Operation;
+import com.scheduler.model.Worker;
 
 public class Body {
 	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
@@ -54,29 +54,32 @@ public class Body {
 								i-=1;
 								for (int k = 1; k <= Integer.valueOf(s[1]); k++){
 									i+=1;
-									Models.add(new Mashine());
-									Models.get(i-1).setType(s[0]);
-									Models.get(i-1).setId("(id M"+i+")"+s[0]);
+									Mashine objMashine=new Mashine();
+									objMashine.setType(s[0]);
+									objMashine.setId("(id M"+i+")"+s[0]);
+									Models.add(objMashine);
 									}
 								break;
 							}
 							case 2:{
-								Workers.add(new Worker());
-								Workers.get(i-1).setId("(id W"+i+") "+s[0]);
-								Workers.get(i-1).setProf(s[1]);
+								Worker objWorker = new Worker();
+								objWorker.setId("(id W"+i+") "+s[0]);
+								objWorker.setProf(s[1]);
 								for (String mash:s[2].split("`")){
-									Workers.get(i-1).addMash(mash);
+									objWorker.addMash(mash);
 								}
+								Workers.add(objWorker);								
 								break;
 							}
 							case 3:{
-								Operations.add(new Operation());
-								Operations.get(i-1).setId("(id Op"+i+") "+s[0]);
-								Operations.get(i-1).setProf(s[2]);
-								Operations.get(i-1).setMash(s[1]);
-								Operations.get(i-1).setCost(Integer.valueOf(s[4]));
-								Operations.get(i-1).setTime(Integer.valueOf(s[3]));
-								Operations.get(i-1).setWeight(Math.round(100*Operations.get(i-1).getCost()/Operations.get(i-1).getTime()));
+								Operation objOperation = new Operation();
+								objOperation.setId("(id Op"+i+") "+s[0]);
+								objOperation.setProf(s[2]);
+								objOperation.setMash(s[1]);
+								objOperation.setCost(Integer.valueOf(s[4]));
+								objOperation.setTime(Integer.valueOf(s[3])); 
+								objOperation.setWeight(Math.round(100*objOperation.getCost()/objOperation.getTime()));
+								Operations.add(objOperation);
 								if (s.length==6)
 									if (s[5].equals("#")){
 										WaitNum+=1;
