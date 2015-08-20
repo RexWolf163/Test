@@ -12,15 +12,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
 import com.scheduler.model.Mashine;
 import com.scheduler.model.Operation;
 import com.scheduler.model.Worker;
 
 import static com.rw.util.Print.*;
 import static com.rw.util.Range.*;
-
+/**Основной класс*/
 public class Body {
 	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
 	public static ArrayList<Worker> Workers = new ArrayList<Worker>();		
@@ -32,7 +30,10 @@ public class Body {
 	public static Date date1 = new Date();
 	public static Date date2 = new Date();
 	
-	public static int Loading(boolean debag){//Загрузка данных из файлов
+	/**Загрузка данных из файлов
+	 * @param debag если true - дублирует загруженные строки в консоль
+	 * */
+	public static int Loading(boolean debag){
 		int result=0;
 		
 		String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
@@ -49,50 +50,48 @@ public class Body {
 				while ((sCurrentLine = br.readLine()) != null) {
 					i+=1;
 					stroke=sCurrentLine.split("\t");
-					if (stroke[0].length()!=0) {
-						switch (Load){
-							case "mashines.txt":{
-								for (int k : range(i, Integer.valueOf(stroke[1])+i)){
-									Mashine objMashine=new Mashine();
-									objMashine.setType(stroke[0]);
-									objMashine.setId("(id M"+k+")"+stroke[0]);
-									Models.add(objMashine);
-									}
-								i+=Integer.valueOf(stroke[1])-1;
-								break;
-							}
-							case "workers.txt":{
-								Worker objWorker = new Worker();
-								objWorker.setId("(id W"+i+") "+stroke[0]);
-								objWorker.setProf(stroke[1]);
-								for (String mash:stroke[2].split("`")){
-									objWorker.addMash(mash);
+					if (stroke[0].length()==0) continue;//проверка на "пустую" строку
+					switch (Load){
+						case "mashines.txt":{
+							for (int k : range(i, Integer.valueOf(stroke[1])+i)){
+								Mashine objMashine=new Mashine();
+								objMashine.setType(stroke[0]);
+								objMashine.setId("(id M"+k+")"+stroke[0]);
+								Models.add(objMashine);
 								}
-								Workers.add(objWorker);								
-								break;
-							}
-							case "Operations.txt":{
-								Operation objOperation = new Operation();
-								objOperation.setId("(id Op"+i+") "+stroke[0]);
-								objOperation.setProf(stroke[2]);
-								objOperation.setMash(stroke[1]);
-								objOperation.setCost(Integer.valueOf(stroke[4]));
-								objOperation.setTime(Integer.valueOf(stroke[3])); 
-								objOperation.setWeight(Math.round(100*objOperation.getCost()/objOperation.getTime()));
-								Operations.add(objOperation);
-								if (stroke.length==6)
-									if (stroke[5].equals("#")){
-										WaitNum+=1;
-										Operations.get(i-1).setWait(true);
-										Operations.get(i-2).setWeight(Math.round((Operations.get(i-2).getWeight()+Operations.get(i-1).getWeight())/2));
-										Operations.get(i-1).setWeight(Operations.get(i-2).getWeight());
-									}
-								
-								break;
-							}
+							i+=Integer.valueOf(stroke[1])-1;
+							break;
 						}
-						
+						case "workers.txt":{
+							Worker objWorker = new Worker();
+							objWorker.setId("(id W"+i+") "+stroke[0]);
+							objWorker.setProf(stroke[1]);
+							for (String mash:stroke[2].split("`")){
+								objWorker.addMash(mash);
+							}
+							Workers.add(objWorker);								
+							break;
+						}
+						case "Operations.txt":{
+							Operation objOperation = new Operation();
+							objOperation.setId("(id Op"+i+") "+stroke[0]);
+							objOperation.setProf(stroke[2]);
+							objOperation.setMash(stroke[1]);
+							objOperation.setCost(Integer.valueOf(stroke[4]));
+							objOperation.setTime(Integer.valueOf(stroke[3])); 
+							objOperation.setWeight(Math.round(100*objOperation.getCost()/objOperation.getTime()));
+							Operations.add(objOperation);
+							if (stroke.length==6)
+								if (stroke[5].equals("#")){
+									WaitNum+=1;
+									Operations.get(i-1).setWait(true);
+									Operations.get(i-2).setWeight(Math.round((Operations.get(i-2).getWeight()+Operations.get(i-1).getWeight())/2));
+									Operations.get(i-1).setWeight(Operations.get(i-2).getWeight());
+								}
+							break;
+						}
 					}
+
 				}
 
 			} catch (IOException e) {
@@ -108,7 +107,7 @@ public class Body {
 				}
 			}
 		}
-		//немного информации
+
 		if (debag)
 			{println("Загружены данные:"
 				+ "\nОборудование:");
@@ -469,14 +468,14 @@ public class Body {
 				W=Workers.get(i).getMash().size();
 			}
 
-	        Operation z=new Operation();
+	        Operation objOperation=new Operation();
 				W=-1;
 				for (int i:range(Operations.size())){
 					//println(W+" "+i+Wor.Pool);
 					if ((W!=-1)&&(W<Operations.get(i).getWeight())){
-						z=Operations.get(i-1);
+						objOperation=Operations.get(i-1);
 						Operations.set(i-1,Operations.get(i));
-						Operations.set(i, z);
+						Operations.set(i, objOperation);
 						i-=2;
 						if (i<0)i=0;
 					}
