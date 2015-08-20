@@ -31,4 +31,4 @@ public class Print {
   	printfln(String format, Object... args) {
  		return System.out.printf(format+"\n", args);
  	}
-} ///:~
+}
