@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import com.scheduler.model.Mashine;
 import com.scheduler.model.Operation;
 import com.scheduler.model.Worker;
+import com.rw.util.Sort;
 
 import static com.rw.util.Print.*;
 import static com.rw.util.Range.*;
+
 /**Основной класс*/
 public class Body {
 	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
@@ -491,9 +494,18 @@ public class Body {
         Таким образом приоритет получат более дорогие операции для более узких спецов
         Последнее важно, так как широкий спец найдет альтернативное занятие легче узкого
         */
-		Integer stek = null;
+       
+        ArrayList<Integer> key = new ArrayList<Integer>();
+        for (Worker i:Workers) key.add(i.getMash().size());
+        Sort.arrayMultiSort(Workers, key);
+        
+        key.clear();
+        for (Operation i:Operations) key.add(i.getWeight());
+        Sort.arrayMultiSort(Operations, key, true);
+
+        /*Integer stek = null;
         Worker stekWorker=new Worker();
-		for (int index=0;index<Workers.size();index++){
+        for (int index=0;index<Workers.size();index++){
 			if ((stek!=null)&&(stek>Workers.get(index).getMash().size())){
 				stekWorker=Workers.get(index-1);
 				Workers.set(index-1,Workers.get(index));
@@ -502,9 +514,9 @@ public class Body {
 				if (index<0)index=0;
 			}
 			stek=Workers.get(index).getMash().size();
-		}
+		}*/
 
-		Operation stekOperation=new Operation();
+		/*Operation stekOperation=new Operation();
 		stek=null;
 		for (int index=0; index<Operations.size();index++){
 			if ((stek!=null)&&(stek<Operations.get(index).getWeight())){
@@ -515,7 +527,7 @@ public class Body {
 				if (index<0)index=0;
 			}
 			stek=Operations.get(index).getWeight();
-		}
+		}*/
 		//распределяем задачи меж сотрудников 
         WorkersDuty();
         //расставляем работников по местам
