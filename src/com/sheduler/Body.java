@@ -350,8 +350,8 @@ public class Body {
 				Wor.setWorkId(null);
 			}
 			//если нет назначенной операции, то происходит выбор новой операции из пула
-			breakFor=true;
 			if (Wor.getWorkId()==null){
+				label1:
 				for (int idOperation:Wor.getPool()){
 					skip=false;
 					//проводится проверка на выполнение ведущей операции, если данная является ведомой
@@ -378,13 +378,10 @@ public class Body {
 										Mod.getId(),
 										Operations.get(idOperation).getId(),
 										Operations.get(idOperation).getTime()));
-									
-								breakFor=false;
-								break;
+								break label1;
 							}
 						}
 					}
-				if (!breakFor) break;
 				}
 			}
 		}
