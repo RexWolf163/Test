@@ -399,22 +399,6 @@ public class Body {
 		После этого работнику назначается станок. При недоступности станка, берется следующая операция в пуле. Проверяется
 		наличие зависимости ("цепочки")*/
 	public static void MashinesDuty(){
-		/*Integer stek;
-		Integer weight;
-		for (Worker Wor:Workers){
-			weight=null;
-			for (int index: range(Wor.getPool().size())){
-				if ((weight!=null)&&(weight<Operations.get(Wor.getPool().get(index)).getWeight())){
-					stek=Wor.getPool().get(index-1);
-					Wor.setPool(index-1,Wor.getPool().get(index));
-					Wor.setPool(index, stek);
-					index-=2;
-					if (index<0)index=0;
-				}
-				weight=Operations.get(Wor.getPool().get(index)).getWeight();
-			}
-		}*/
-		
 		//Очистка переменных для учета
 		for (Worker Wor:Workers){
 			Wor.setWorkTime(0);
