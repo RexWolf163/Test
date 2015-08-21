@@ -339,7 +339,6 @@ public class Body {
 	public static int RefreshWork(){
 		//Изначально отметка времени ставится на минуту позже верхней границы периода расчета
 		int TimeStamp=WorkTime+1;
-		boolean breakFor;
 		//флаг пропуска ожидающих "ведомых" операций
 		boolean skip=false;
 		for (Worker Wor:Workers){
