@@ -334,12 +334,16 @@ public class Sheduler {
 					skip=false;
 					//проводится проверка на выполнение ведущей операции, если данная является ведомой
 					if (Operations.get(idOperation).getWait()){
-						skip=true;
+						/*skip=true;
 						if ((Operations.get(idOperation-1).getStart()!=null)&&
 								(Current>=
 								(Operations.get(idOperation-1).getStart()+Operations.get(idOperation-1).getTime()))){
 							skip=false;
-						}
+						}*/
+						skip=((Operations.get(idOperation-1).getStart()!=null)&&
+								(Current>=(Operations.get(idOperation-1).getStart()
+										+Operations.get(idOperation-1).getTime())))
+								?false:true;
 					}
 					//при получении "разрешения" Операции в коллекции Operations приписывается время старта.
 					if (!skip){
