@@ -23,10 +23,10 @@ public class Operation {
 	/**Количество рабочих, претендующих на данную операцию*/
 	private int pretendents;
 	/**Счетчик объектов типа Станок*/
-	private static long counter=1;
+	private static long counter;
 	
 	public Operation(String[] stroke){
-		id="(id Op"+(counter++)+") "+stroke[0];
+		id="(id Op"+(++counter)+") "+stroke[0];
 		prof=stroke[2];
 		mash=stroke[1];
 		cost=Integer.valueOf(stroke[4]);
