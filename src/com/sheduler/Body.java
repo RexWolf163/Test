@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -192,19 +193,19 @@ public class Sheduler {
 		br=new BufferedReader(new InputStreamReader(System.in));
 		SimpleDateFormat format = new SimpleDateFormat();
 		format.applyPattern("dd.MM.yyyy");
-		Date date = null;
+		Date date = new Date();
 		try {
 			String stroke;
 			if (!debag) stroke=br.readLine();
 			else stroke="1.1.1";
-			
+			if (stroke.length()==0) return format.parse(format.format(date));
 			try {				
 				date= format.parse(stroke);
 			} catch (ParseException e) {
 				println("Неправильно введена дата");
 				System.exit(0);
 			}
-		} catch (IOException e) {
+		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 			System.exit(0);
 		} 
@@ -434,10 +435,10 @@ public class Sheduler {
 		Check();
 		println("Проверка корректности данных завершена"
 				+ "\n--------------------------------------------------\n\n\n"
-				+ "Введите дату начала расчета в формате ДД.ММ.ГГГГ");
+				+ "Введите дату начала расчета в формате ДД.ММ.ГГГГ  (или нажмите Enter для сегодняшней даты)");
 		//Делаем запрос на диапазон расчета
 		date1=RDate(false);
-        println("\nВведите дату конца расчета");
+        println("\nВведите дату конца расчета (или нажмите Enter для сегодняшней даты)");
         date2=RDate(false);
         if (date2.getTime()<date1.getTime()){
         	println("Конец расчета должен быть позже начала!");
