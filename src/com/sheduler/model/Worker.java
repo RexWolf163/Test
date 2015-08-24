@@ -23,13 +23,13 @@ public class Worker {
 	 * Если для всех операций в списке pool количество претендентов равно 1, то fin=true*/
 	private boolean fin;
 	/**Счетчик объектов типа Рабочий*/
-	private static long counter=1;
+	private static long counter;
 	
 	public Worker(String[] strok){
 		WorkId=-1;
 		this.mash=new ArrayList<String>();
 		pool=new ArrayList<Integer>();
-		id="(id W"+(counter++)+") "+strok[0];
+		id="(id W"+(++counter)+") "+strok[0];
 		this.prof=strok[1];
 		for (String m:strok[2].split("`")){
 			this.mash.add(m);
