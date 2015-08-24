@@ -10,9 +10,9 @@ public class Mashine {
 	/**Статус (время в минутах от начала расписания, до которого станок занят)*/
 	private int busy;
 	/**Счетчик объектов типа Станок*/
-	private static long counter=1;
+	private static long counter;
 	public Mashine(String[] stroke){
-		id="(id M"+(counter++)+")"+stroke[0];
+		id="(id M"+(++counter)+")"+stroke[0];
 		type=stroke[0];
 	}
 	
