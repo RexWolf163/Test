@@ -8,69 +8,75 @@ import java.util.List;
  * */
 public class Worker {
 	/**Идентификатор*/
-	private String id;
+	private final String id;
 	/**Профессия*/
-	private String prof;
+	private final String prof;
 	/**Список доступных для работы моделей станков*/
-	private ArrayList<String> mash;
+	private final ArrayList<String> mash;
 	/**Список отобранных операций (хранится номер в списке операций)*/
 	private ArrayList<Integer> pool;
 	/**Граница занятости в минутах от начала расчета расписания*/
 	private int workTime;
 	/**Номер текущей операции в списке операций*/
-	private int WorkId;
+	private Integer WorkId;
 	/**Флаг, показывающий статус распределения операций. 
 	 * Если для всех операций в списке pool количество претендентов равно 1, то fin=true*/
 	private boolean fin;
+	/**Счетчик объектов типа Рабочий*/
+	private static long counter=1;
 	
-	public Worker(){
-		this.WorkId=-1;
+	public Worker(String[] strok){
+		WorkId=-1;
 		this.mash=new ArrayList<String>();
-		this.pool=new ArrayList<Integer>();
-		
+		pool=new ArrayList<Integer>();
+		id="(id W"+(counter++)+") "+strok[0];
+		this.prof=strok[1];
+		for (String m:strok[2].split("`")){
+			this.mash.add(m);
+		}
 	}
 	
 	/**Запрос данных об id */
-	public String getId(){return this.id;}
+	public String getId(){return id;}
 	/**Запрос данных об prof */
-	public String getProf(){return this.prof;}
+	public String getProf(){return prof;}
 	/**Запрос данных об mash */
-	public List<String> getMash(){return this.mash;}
+	public List<String> getMash(){return mash;}
 	/**Запрос данных об pool */
-	public List<Integer> getPool(){return this.pool;}
+	public List<Integer> getPool(){return pool;}
 	/**Запрос данных об workTime */
-	public int getWorkTime(){return this.workTime;}
+	public int getWorkTime(){return workTime;}
 	/**Запрос данных об WorkId */
-	public int getWorkId(){return this.WorkId;}
+	public Integer getWorkId(){return WorkId;}
 	/**Запрос данных об fin */
-	public boolean getFin(){return this.fin;}
+	public boolean getFin(){return fin;}
 	
-	/**Корректировка данных id */
-	public void setId(String data){this.id=data;}
-	/**Корректировка данных prof */
-	public void setProf(String data){this.prof=data;}
-	/**Добавление данных в mash */
-	public int addMash(String data){
-		this.mash.add(data);
-		return this.mash.size();}
+//	/**Корректировка данных id */
+//	public void setId(String data){id=data;}
+//	/**Корректировка данных prof */
+//	public void setProf(String data){prof=data;}
+//	/**Добавление данных в mash */
+/*	public int addMash(String data){
+		mash.add(data);
+		return mash.size();}*/
 	/**Добавление данных в pool */
 	public int addPool(int data){
-		this.pool.add(data);
-		return this.pool.size();
+		pool.add(data);
+		return pool.size();
 	}
 	/**Удаление задачи из pool*/
 	public int removePool(int data){
-		this.pool.remove(data);
-		return this.pool.size();
+		pool.remove(data);
+		return pool.size();
 	}
 	/**Корректирование записи в pool*/
 	public int setPool(int index, int element){
-		this.pool.set(index,element);
-		return this.pool.size();
+		pool.set(index,element);
+		return pool.size();
 	}
-	public void setWorkTime(int data){this.workTime=data;}
+	public void setWorkTime(int data){workTime=data;}
 	/**Корректировка данных WorkId */
-	public void setWorkId(int data){this.WorkId=data;}
+	public void setWorkId(Integer data){WorkId=data;}
 	/**Корректировка данных fin */
-	public void setFin(boolean data){this.fin=data;}
+	public void setFin(boolean data){fin=data;}
 }
