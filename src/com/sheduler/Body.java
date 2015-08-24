@@ -189,15 +189,14 @@ public class Sheduler {
 	 * @param debag если true - Вместо считывания даты с клавиатуры возвращает "1.1.1"
 	 * @return Date в формате "dd.MM.yyyy" или null при ошибке
 	 * */
-	public static Date RDate(boolean debag){
+	public static Date RDate(){
 		br=new BufferedReader(new InputStreamReader(System.in));
 		SimpleDateFormat format = new SimpleDateFormat();
 		format.applyPattern("dd.MM.yyyy");
 		Date date = new Date();
 		try {
 			String stroke;
-			if (!debag) stroke=br.readLine();
-			else stroke="1.1.1";
+			stroke=br.readLine();
 			if (stroke.length()==0) return format.parse(format.format(date));
 			try {				
 				date= format.parse(stroke);
@@ -437,9 +436,9 @@ public class Sheduler {
 				+ "\n--------------------------------------------------\n\n\n"
 				+ "Введите дату начала расчета в формате ДД.ММ.ГГГГ  (или нажмите Enter для сегодняшней даты)");
 		//Делаем запрос на диапазон расчета
-		date1=RDate(false);
+		date1=RDate();
         println("\nВведите дату конца расчета (или нажмите Enter для сегодняшней даты)");
-        date2=RDate(false);
+        date2=RDate();
         if (date2.getTime()<date1.getTime()){
         	println("Конец расчета должен быть позже начала!");
         	System.exit(0);
