@@ -32,8 +32,7 @@ public class Operation {
 		cost=Integer.valueOf(stroke[4]);
 		time=Integer.valueOf(stroke[3]);
 		weight=Math.round(100*cost/time);
-		if ((stroke.length==6)&&(stroke[5].equals("#"))){wait=true;
-		}else{wait=false;}		
+		wait=((stroke.length==6)&&(stroke[5].equals("#"))) ? true : false;		
 	}
 	
 	/**Запрос данных об id */
