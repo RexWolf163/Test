@@ -4,24 +4,29 @@ package com.scheduler.model;
  * */
 public class Mashine {
 	/**Идентификатор*/
-	private String id;
+	private final String id;
 	/**Модель*/
-	private String type;
+	private final String type;
 	/**Статус (время в минутах от начала расписания, до которого станок занят)*/
 	private int busy;
+	/**Счетчик объектов типа Станок*/
+	private static long counter=1;
+	public Mashine(String[] stroke){
+		id="(id M"+(counter++)+")"+stroke[0];
+		type=stroke[0];
+	}
+	
 	
 	/**Запрос данных об id */
 	public String getId() {return id;}
-	/**Корректировка id */
-	public void setId(String data) {this.id=data;}
+//	/**Корректировка id */
+//	public void setId(String data) {id=data;}
 	/**Запрос данных об типе*/
 	public String getType() {return type;}
-	/**Корректировка типа */
-	public void setType(String data) {this.type=data;}
+//	/**Корректировка типа */
+//	public void setType(String data) {type=data;}
 	/**Запрос данных об статусе*/
 	public int getBusy() {return busy;}
 	/**Корректировка статуса */
-	public void setBusy(int data) {this.busy=data;}
-
+	public void setBusy(int data) {busy=data;}
 }
-
