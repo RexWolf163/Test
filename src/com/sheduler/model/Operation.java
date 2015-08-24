@@ -4,17 +4,17 @@ package com.scheduler.model;
  * */
 public class Operation {
 	/**Идентификатор*/
-	private String id;
+	private final String id;
 	/**Требуемая профессия*/
-	private String prof;
+	private final String prof;
 	/**Требуемая модель станка*/
-	private String mash;
+	private final String mash;
 	/**Стоимость выполненной работы*/
-	private int cost;
+	private final int cost;
 	/**времязатраты операции*/
-	private int time;
+	private final int time;
 	/**Флаг "ведомой" операции. Ставится, если операция не может быть выполнена до завершения предыдущей*/
-	private boolean wait;
+	private final boolean wait;
 	/**Удельный вес операции Стоимость/Время (коп/минуту). Операции с более высоким весом имеют приоритет. 
 	 * Для каждой операции в связанной цепочке процессов, удельный вес берется как (Суммарная стоимость/Суммарная длительность)*/
 	private int weight;
@@ -22,47 +22,56 @@ public class Operation {
 	private Integer start;
 	/**Количество рабочих, претендующих на данную операцию*/
 	private int pretendents;
+	/**Счетчик объектов типа Станок*/
+	private static long counter=1;
 	
-	public Operation(){
-		this.time = 1;
+	public Operation(String[] stroke){
+		id="(id Op"+(counter++)+") "+stroke[0];
+		prof=stroke[2];
+		mash=stroke[1];
+		cost=Integer.valueOf(stroke[4]);
+		time=Integer.valueOf(stroke[3]);
+		weight=Math.round(100*cost/time);
+		if ((stroke.length==6)&&(stroke[5].equals("#"))){wait=true;
+		}else{wait=false;}		
 	}
 	
 	/**Запрос данных об id */
-	public String getId(){return this.id;}
+	public String getId(){return id;}
 	/**Запрос данных об prof */
-	public String getProf(){return this.prof;}
+	public String getProf(){return prof;}
 	/**Запрос данных об mash */
-	public String getMash(){return this.mash;}
+	public String getMash(){return mash;}
 	/**Запрос данных об cost */
-	public int getCost(){return this.cost;}
+	public int getCost(){return cost;}
 	/**Запрос данных об time */
-	public int getTime(){return this.time;}
+	public int getTime(){return time;}
 	/**Запрос данных об id */
-	public boolean getWait(){return this.wait;}
+	public boolean getWait(){return wait;}
 	/**Запрос данных об weight */
-	public int getWeight(){return this.weight;}
+	public int getWeight(){return weight;}
 	/**Запрос данных об start */
-	public Integer getStart(){return this.start;}
+	public Integer getStart(){return start;}
 	/**Запрос данных об pretendents */
-	public int getPretendents(){return this.pretendents;}
+	public int getPretendents(){return pretendents;}
 
-	/**Корректировка данных id */
-	public void setId(String data){this.id=data;}
-	/**Корректировка данных prof */
-	public void setProf(String data){this.prof=data;}
-	/**Корректировка данных mash */
-	public void setMash(String data){this.mash=data;}
-	/**Корректировка данных cost */
-	public void setCost(int data){this.cost=data;}
-	/**Корректировка данных time */
-	public void setTime(int data){this.time=data;}
-	/**Корректировка данных id */
-	public void setWait(boolean data){this.wait=data;}
+//	/**Корректировка данных id */
+//	public void setId(String data){id=data;}
+//	/**Корректировка данных prof */
+//	public void setProf(String data){prof=data;}
+//	/**Корректировка данных mash */
+//	public void setMash(String data){mash=data;}
+//	/**Корректировка данных cost */
+//	public void setCost(int data){cost=data;}
+//	/**Корректировка данных time */
+//	public void setTime(int data){time=data;}
+//	/**Корректировка данных id */
+//	public void setWait(boolean data){wait=data;}
 	/**Корректировка данных weight */
-	public void setWeight(int data){this.weight=data;}
+	public void setWeight(int data){weight=data;}
 	/**Корректировка данных start */
-	public void setStart(int data){this.start=data;}
+	public void setStart(int data){start=data;}
 	/**Корректировка данных pretendents */
-	public void setPretendents(int data){this.pretendents=data;}
+	public void setPretendents(int data){pretendents=data;}
 	
 }
