@@ -54,18 +54,6 @@ public class Operation {
 	/**Запрос данных об pretendents */
 	public int getPretendents(){return pretendents;}
 
-//	/**Корректировка данных id */
-//	public void setId(String data){id=data;}
-//	/**Корректировка данных prof */
-//	public void setProf(String data){prof=data;}
-//	/**Корректировка данных mash */
-//	public void setMash(String data){mash=data;}
-//	/**Корректировка данных cost */
-//	public void setCost(int data){cost=data;}
-//	/**Корректировка данных time */
-//	public void setTime(int data){time=data;}
-//	/**Корректировка данных id */
-//	public void setWait(boolean data){wait=data;}
 	/**Корректировка данных weight */
 	public void setWeight(int data){weight=data;}
 	/**Корректировка данных start */
