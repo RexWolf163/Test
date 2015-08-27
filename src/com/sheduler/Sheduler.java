@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,13 +21,13 @@ import static com.rw.util.Range.*;
 
 /**Основной класс*/
 public class Sheduler {
-	public static ArrayList<Mashine> Models = new ArrayList<Mashine>();		
-	public static ArrayList<Worker> Workers = new ArrayList<Worker>();		
-	public static ArrayList<Operation> Operations = new ArrayList<Operation>();
+	public static ArrayList<Mashine> models = new ArrayList<Mashine>();		
+	public static ArrayList<Worker> workers = new ArrayList<Worker>();		
+	public static ArrayList<Operation> operations = new ArrayList<Operation>();
 	public static BufferedReader br;
-	public static List<String> Records = new ArrayList<String>();
-	public static int Current =0;
-	public static int WorkTime=0;
+	public static List<String> records = new ArrayList<String>();
+	public static int current =0;
+	public static int workTime=0;
 	public static Date date1 = new Date();
 	public static Date date2 = new Date();
 	
@@ -36,41 +35,45 @@ public class Sheduler {
 	 * @param debag если true - дублирует загруженные строки в консоль
 	 * @return int количество "ведомых" операций
 	 * */
-	public static int Loading(boolean debag){
+	private int Loading(boolean debag){
 		int result=0;
+		Operation operation1;
+		Operation operation2;
 		
 		String[] files = {"mashines.txt","workers.txt","Operations.txt"}; //список файлов для обработки
 		String[] stroke; //оперативная строковая переменная
 		
-		int WaitNum = 0;//количество "ожидающих" операций (просто для статистики)
+		int waitNum = 0;//количество "ожидающих" операций (просто для статистики)
 		
-		for (String Load:files){
+		for (String load:files){
 			try {
 				String sCurrentLine;
 				int i=0;	
-				br = new BufferedReader(new FileReader(Load));
+				br = new BufferedReader(new FileReader(load));
 				
 				while ((sCurrentLine = br.readLine()) != null) {
 					stroke=sCurrentLine.split("\t");
 					if (stroke[0].length()==0) continue;//проверка на "пустую" строку
-					switch (Load){
+					switch (load){
 						case "mashines.txt":{
 							for (int k : range(Integer.valueOf(stroke[1]))){
-								Models.add(new Mashine(stroke));
+								models.add(new Mashine(stroke));
 								}
 							break;
 						}
 						case "workers.txt":{
-							Workers.add(new Worker(stroke));								
+							workers.add(new Worker(stroke));								
 							break;
 						}
 						case "Operations.txt":{
-							Operations.add(new Operation(stroke));
-							i=Operations.size()-1;
-							if (Operations.get(i).getWait()){
-								WaitNum++;
-								Operations.get(i-1).setWeight(Math.round((Operations.get(i-1).getWeight()+Operations.get(i).getWeight())/2));
-								Operations.get(i).setWeight(Operations.get(i-1).getWeight());
+							operations.add(new Operation(stroke));
+							i=operations.size()-1;
+							operation1=operations.get(i);
+							if (operation1.getWait()){
+								operation2=operations.get(i-1);
+								waitNum++;
+								operation2.setWeight(Math.round((operation2.getWeight()+operation1.getWeight())/2));
+								operation1.setWeight(operation2.getWeight());
 							}
 							break;
 						}
@@ -95,80 +98,80 @@ public class Sheduler {
 		if (debag)
 			{println("Загружены данные:"
 				+ "\nОборудование:");
-			for (Mashine Model : Models) {
+			for (Mashine model : models) {
 				printfln("%s - %s",
-						Model.getId(),
-						Model.getType());
+						model.getId(),
+						model.getType());
 				}
 			println("Работники:");
-			for (Worker Worker : Workers) {
+			for (Worker worker : workers) {
 				printfln("%s (%s - %s)",
-						Worker.getId(),
-						Worker.getProf(),
-						Worker.getMash());
+						worker.getId(),
+						worker.getProf(),
+						worker.getMash());
 				}
 			println("Поставленные задачи:");
-			for (Operation Operation : Operations) {
+			for (Operation operation : operations) {
 				printfln("%s (%s - %s/ %sмин - %sрублей)",
-						Operation.getId(),
-						Operation.getProf(),
-						Operation.getMash(),
-						Operation.getTime(),
-						Operation.getCost());
+						operation.getId(),
+						operation.getProf(),
+						operation.getMash(),
+						operation.getTime(),
+						operation.getCost());
 				}
 			}
-		result=WaitNum;
+		result=waitNum;
 		return result;
 	}
 	/**Проверка загруженных данных
 	 * */
-	public static void Check(){// проверка соответствий названий агрегатов и профессий
+	private void Check(){// проверка соответствий названий агрегатов и профессий
 		boolean errorPresent=false;//в массиве обнаружена ошибка
 		boolean hasErrors=false;//при проверке ошибки были обнаружены
 		
-		for (Worker Worker:Workers)
-			for (String mash:Worker.getMash()){
+		for (Worker worker:workers)
+			for (String mash:worker.getMash()){
 				errorPresent=true;
-				for (Mashine Model:Models)
-					if (Model.getType().equals(mash)){ 
+				for (Mashine model:models)
+					if (model.getType().equals(mash)){ 
 						errorPresent=false;
 						break;
 					}
 				if(errorPresent) {
 					printfln("Оборудование указаное в записи %s %s в базе данных не обнаружено",
-							Worker.getId(),
-							Worker.getMash());
+							worker.getId(),
+							worker.getMash());
 					hasErrors=true;
 				}
 		}
-		for (Operation Operation:Operations){
+		for (Operation operation:operations){
 			errorPresent=true;
-			for (Mashine Model:Models)
-				if (Model.getType().equals(Operation.getMash())) {
+			for (Mashine model:models)
+				if (model.getType().equals(operation.getMash())) {
 					errorPresent=false;
 					break;
 			}
 			if(errorPresent) {printfln("Оборудование указаное в записи %s %s в базе данных не обнаружено",
-					Operation.getId(),
-					Operation.getMash());
+					operation.getId(),
+					operation.getMash());
 				hasErrors=true;
 			}
 		}
-		for (Operation Operation:Operations){
+		for (Operation operation:operations){
 			errorPresent=true;
-			for (Worker Worker:Workers)
-				if (Worker.getProf().equals(Operation.getProf())){
+			for (Worker worker:workers)
+				if (worker.getProf().equals(operation.getProf())){
 					errorPresent=false;
 					break;
 				}
 			if(errorPresent) {printfln("Профессия указаная в записи %s %s среди персонала не встречается",
-					Operation.getId(),
-					Operation.getProf());
+					operation.getId(),
+					operation.getProf());
 				hasErrors=true;
 			}
 		}
-		for (Operation Operation:Operations){
-			if (Operation.getWait()) {
+		for (Operation operation:operations){
+			if (operation.getWait()) {
 				if (errorPresent) {
 					println("Обнаружена цепочка длиной более двух операций");
 					hasErrors=true;
@@ -189,7 +192,7 @@ public class Sheduler {
 	 * @param debag если true - Вместо считывания даты с клавиатуры возвращает "1.1.1"
 	 * @return Date в формате "dd.MM.yyyy" или null при ошибке
 	 * */
-	public static Date RDate(){
+	private Date RDate(){
 		br=new BufferedReader(new InputStreamReader(System.in));
 		SimpleDateFormat format = new SimpleDateFormat();
 		format.applyPattern("dd.MM.yyyy");
@@ -225,13 +228,13 @@ public class Sheduler {
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
         @param Worker объект-рабочий
         */
-	public static void FillPool(Worker Wor){//
-		for (Operation Op:Operations){
-			if (Wor.getProf().equals(Op.getProf())){
-				if (Wor.getMash().indexOf(Op.getMash())!=-1){
-					Wor.setWorkTime(Wor.getWorkTime()+Op.getTime());
-					Op.setPretendents(Op.getPretendents()+1);
-					Wor.addPool(Operations.indexOf(Op));
+	private void FillPool(Worker worker){//
+		for (Operation operation:operations){
+			if (worker.getProf().equals(operation.getProf())){
+				if (worker.getMash().indexOf(operation.getMash())!=-1){
+					worker.setWorkTime(worker.getWorkTime()+operation.getTime());
+					operation.setPretendents(operation.getPretendents()+1);
+					worker.addPool(operations.indexOf(operation));
 				}
 			}
 		}
@@ -242,14 +245,16 @@ public class Sheduler {
 	 * @param Worker объект-рабочий
 	 * @return true - если не найдено спорных работ, false - если найдена и сброшена спорная работа
 	 * */
-	public static boolean DropPool(Worker Wor){
+	private boolean DropPool(Worker worker){
 		boolean bool=true;
-		for (int IDOp:Wor.getPool()){
-			if (Operations.get(IDOp).getPretendents()>1){
+		Operation operationTempVar;
+		for (int IDOp:worker.getPool()){
+			operationTempVar=operations.get(IDOp);
+			if (operationTempVar.getPretendents()>1){
 				bool=false;
-				Wor.setWorkTime(Wor.getWorkTime()-Operations.get(IDOp).getTime());
-				Wor.removePool(Wor.getPool().indexOf(IDOp));
-				Operations.get(IDOp).setPretendents(Operations.get(IDOp).getPretendents()-1);
+				worker.setWorkTime(worker.getWorkTime()-operationTempVar.getTime());
+				worker.removePool(worker.getPool().indexOf(IDOp));
+				operationTempVar.setPretendents(operationTempVar.getPretendents()-1);
 				break;
 			}
 		}
@@ -270,18 +275,18 @@ public class Sheduler {
          		Данный пункт повторяется до тех пор, пока не будет достигнута "1" в претендентах у всех операций.
        
 	*/
-	public static void WorkersDuty(){
+	private void WorkersDuty(){
 				
-        int BiggerTime = 0; //Наибольшее время загрузки
-        int BiggerID=-1; //Индекс работника с наибольшим временем загрузки в коллекции
+        int biggerTime = 0; //Наибольшее время загрузки
+        int biggerID=-1; //Индекс работника с наибольшим временем загрузки в коллекции
         // первичное распределение операций
-        for (Worker Wor:Workers){
+        for (Worker Wor:workers){
         	FillPool(Wor);
         	//сравнение BiggerTin=me со временем загрузки данного работника
-        	//Если новое время выше, BiggerTime переписывается и запоминается новый BiggerID
-        	if (BiggerTime<Wor.getWorkTime()){
-        		BiggerTime=Wor.getWorkTime();
-        		BiggerID=Workers.indexOf(Wor);
+        	//Если новое время выше, biggerTime переписывается и запоминается новый biggerID
+        	if (biggerTime<Wor.getWorkTime()){
+        		biggerTime=Wor.getWorkTime();
+        		biggerID=workers.indexOf(Wor);
         	}
         }
         
@@ -290,23 +295,23 @@ public class Sheduler {
         while(!fin){
         	//проверка количества претендентов на операцию
         	fin=true;
-        	for (Operation Op:Operations){
+        	for (Operation operation:operations){
         		//если не все операции распределены, то флаг fin=false 
-        		if (Op.getPretendents()>1){
+        		if (operation.getPretendents()>1){
         			fin=false;
         			break;
         		}
         	}
-        	Workers.get(BiggerID).setFin(DropPool(Workers.get(BiggerID))); 
+        	workers.get(biggerID).setFin(DropPool(workers.get(biggerID))); 
         	//сброс операции от самого занятого
         	//и обнуление переменных
-        	BiggerTime=0;
-       		BiggerID=-1;
+        	biggerTime=0;
+       		biggerID=-1;
        		//ищем следующего "жадину"
-            for (Worker Wor:Workers){
-            	if ((!Wor.getFin())&&(BiggerTime<Wor.getWorkTime())){
-            		BiggerTime=Wor.getWorkTime();
-            		BiggerID=Workers.indexOf(Wor);
+            for (Worker Wor:workers){
+            	if ((!Wor.getFin())&&(biggerTime<Wor.getWorkTime())){
+            		biggerTime=Wor.getWorkTime();
+            		biggerID=workers.indexOf(Wor);
             	}
             }
         }		
@@ -315,51 +320,49 @@ public class Sheduler {
 	/**Обновление данных о статусе работ
 	 * @return Время в минутах от начала расчета расписания, в которое завершена, как минимум одна работа
 	 * */
-	public static int RefreshWork(){
+	private int RefreshWork(){
 		//Изначально отметка времени ставится на минуту позже верхней границы периода расчета
-		int TimeStamp=WorkTime+1;
+		int timeStamp=workTime+1;
 		//флаг пропуска ожидающих "ведомых" операций
 		boolean skip=false;
-		for (Worker Wor:Workers){
+		
+		Operation operation1;
+		Operation operation2;
+		for (Worker worker:workers){
 		//проверка на превышение текущего времени над временем завершения работы. 
 		//Если истинно, то из пула удаляется выполненная операция
-			if ((Wor.getWorkTime()<=Current)&&(Wor.getWorkId()!=null)){
-				Wor.removePool(Wor.getPool().indexOf(Wor.getWorkId()));
-				Wor.setWorkId(null);
+			if ((worker.getWorkTime()<=current)&&(worker.getWorkId()!=null)){
+				worker.removePool(worker.getPool().indexOf(worker.getWorkId()));
+				worker.setWorkId(null);
 			}
 			//если нет назначенной операции, то происходит выбор новой операции из пула
-			if (Wor.getWorkId()==null){
+			if (worker.getWorkId()==null){
 				label1:
-				for (int idOperation:Wor.getPool()){
+				for (int idOperation:worker.getPool()){
 					skip=false;
 					//проводится проверка на выполнение ведущей операции, если данная является ведомой
-					if (Operations.get(idOperation).getWait()){
-						/*skip=true;
-						if ((Operations.get(idOperation-1).getStart()!=null)&&
-								(Current>=
-								(Operations.get(idOperation-1).getStart()+Operations.get(idOperation-1).getTime()))){
-							skip=false;
-						}*/
-						skip=((Operations.get(idOperation-1).getStart()!=null)&&
-								(Current>=(Operations.get(idOperation-1).getStart()
-										+Operations.get(idOperation-1).getTime())))
+					operation1=operations.get(idOperation);
+					if (operation1.getWait()){
+						operation2=operations.get(idOperation-1);
+						skip=((operation2.getStart()!=null)&&
+								(current>=(operation2.getStart()+operation2.getTime())))
 								?false:true;
 					}
 					//при получении "разрешения" Операции в коллекции Operations приписывается время старта.
 					if (!skip){
-						for (Mashine Mod:Models){
-							if ((Mod.getBusy()<=Current)&&(Mod.getType().equals(Operations.get(idOperation).getMash()))){
-								Wor.setWorkTime(Operations.get(idOperation).getTime()+Current);
-								Mod.setBusy(Operations.get(idOperation).getTime()+Current);
-								Wor.setWorkId(idOperation);
-								Operations.get(idOperation).setStart(Current);
-								Records.add(String.format("%s по %s %s=> занимает %s для %s :%sмин",
-										DateTrans(Current),
-										DateTrans(Wor.getWorkTime()),
-										Wor.getId(),
-										Mod.getId(),
-										Operations.get(idOperation).getId(),
-										Operations.get(idOperation).getTime()));
+						for (Mashine model:models){
+							if ((model.getBusy()<=current)&&(model.getType().equals(operation1.getMash()))){
+								worker.setWorkTime(operation1.getTime()+current);
+								model.setBusy(operation1.getTime()+current);
+								worker.setWorkId(idOperation);
+								operation1.setStart(current);
+								records.add(String.format("%s по %s %s=> занимает %s для %s :%sмин",
+										DateTrans(current),
+										DateTrans(worker.getWorkTime()),
+										worker.getId(),
+										model.getId(),
+										operation1.getId(),
+										operation1.getTime()));
 								break label1;
 							}
 						}
@@ -368,11 +371,11 @@ public class Sheduler {
 			}
 		}
 		//производится перебор рабочих, для определения минимального времени завершения
-		for (Worker Wor:Workers){
-			if((Wor.getWorkId()!=null)&&(Wor.getPool().size()>0)&&(TimeStamp>Wor.getWorkTime())) TimeStamp=Wor.getWorkTime();
+		for (Worker worker:workers){
+			if((worker.getWorkId()!=null)&&(worker.getPool().size()>0)&&(timeStamp>worker.getWorkTime())) timeStamp=worker.getWorkTime();
 		}
 		
-		return TimeStamp;
+		return timeStamp;
 	}
 	/**раскидываем операции по машинам.
 		
@@ -381,11 +384,11 @@ public class Sheduler {
 		
 		После этого работнику назначается станок. При недоступности станка, берется следующая операция в пуле. Проверяется
 		наличие зависимости ("цепочки")*/
-	public static void MashinesDuty(){
+	private void MashinesDuty(){
 		//Очистка переменных для учета
-		for (Worker Wor:Workers){
-			Wor.setWorkTime(0);
-			Wor.setWorkId(null);
+		for (Worker worker:workers){
+			worker.setWorkTime(0);
+			worker.setWorkId(null);
 		}
 		
 		//сортировка завершена.
@@ -393,14 +396,14 @@ public class Sheduler {
 		int step=0;
 		while (step<100000){
 			step+=1;//страховка от вечного цикла
-			Current=RefreshWork();
+			current=RefreshWork();
 			bool=true;
-			for (Worker Wor:Workers)
-				if (Wor.getPool().size()>0) {
+			for (Worker worker:workers)
+				if (worker.getPool().size()>0) {
 					bool=false;
 					break;
 				}
-			if ((bool)||(Current>WorkTime)) break;
+			if ((bool)||(current>workTime)) break;
 		}
 	}
 	
@@ -408,32 +411,32 @@ public class Sheduler {
 	 * Считаем началом дня 8:00, конец 17:00, а обед 12:00-13:00
 	 * @param M время в минутах с начала расчета расписания
 	 * @return Время в формате "HH:mm dd.MM.yyyyг " */
-	public static String DateTrans(Integer M){
-		if (M==null) return "-";
-		int Days=Math.floorDiv(M, 8*60);
-		int Hours=Math.floorDiv(M-Days*8*60, 60)+8;
-		int Minutes=M-Days*8*60-(Hours-8)*60;
-		if (Hours>=12)Hours+=1;
+	private String DateTrans(Integer m){
+		if (m==null) return "-";
+		int days=Math.floorDiv(m, 8*60);
+		int hours=Math.floorDiv(m-days*8*60, 60)+8;
+		int minutes=m-days*8*60-(hours-8)*60;
+		if (hours>=12)hours+=1;
 
 		Calendar NDate = Calendar.getInstance();
 		
 		NDate.setTime(date1);
-		NDate.add(Calendar.DAY_OF_MONTH, Days);
-		NDate.add(Calendar.HOUR, Hours);
-		NDate.add(Calendar.MINUTE, Minutes);
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm dd.MM.yyyyг ");	
-		return (sdf.format(NDate.getTime()));
+		NDate.add(Calendar.DAY_OF_MONTH, days);
+		NDate.add(Calendar.HOUR, hours);
+		NDate.add(Calendar.MINUTE, minutes);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm dd.MM.yyyyг ");	
+		return (simpleDateFormat.format(NDate.getTime()));
 
 	}
 	
-	public static void main(String[] args) {
+	public void MakeShedule() {
 		
 		//Загрузка данных из файлов
-		int WaitNum=Loading(true);
+		int waitNum=Loading(true);
 		printfln("\nНайдено %s сцепленных операций"
 				+ "\n--------------------------------------------------\n"
 				+ "Проверка корректности данных",
-				WaitNum);	
+				waitNum);	
 		// проверка соответствий названий агрегатов и профессий
 		Check();
 		println("Проверка корректности данных завершена"
@@ -447,11 +450,11 @@ public class Sheduler {
         	println("Конец расчета должен быть позже начала!");
         	System.exit(0);
         }
-        long Days = 1+Math.abs(date1.getTime()-date2.getTime())/(1000*60*60*24);
+        long days = 1+Math.abs(date1.getTime()-date2.getTime())/(1000*60*60*24);
         printfln("\nПланирование производится на %s дней (%s рабочих минут)"
-        		+ "\n\n", Days, Days*8*60);
+        		+ "\n\n", days, days*8*60);
         
-        WorkTime = (int) Days*8*60;//рабочий период (пригодится)
+        workTime = (int) days*8*60;//рабочий период (пригодится)
         
         /*Сортируем рабочих по количеству Станков а операции по относительной стоимости минуты. 
         Таким образом приоритет получат более дорогие операции для более узких спецов
@@ -459,38 +462,12 @@ public class Sheduler {
         */
        
         ArrayList<Integer> key = new ArrayList<Integer>();
-        for (Worker i:Workers) key.add(i.getMash().size());
-        Sort.arrayMultiSort(Workers, key);
+        for (Worker worker:workers) key.add(worker.getMash().size());
+        Sort.arrayMultiSort(workers, key);
         
         key.clear();
-        for (Operation i:Operations) key.add(i.getWeight());
-        Sort.arrayMultiSort(Operations, key, true);
-
-        /*Integer stek = null;
-        Worker stekWorker=new Worker();
-        for (int index=0;index<Workers.size();index++){
-			if ((stek!=null)&&(stek>Workers.get(index).getMash().size())){
-				stekWorker=Workers.get(index-1);
-				Workers.set(index-1,Workers.get(index));
-				Workers.set(index, stekWorker);
-				index-=2;
-				if (index<0)index=0;
-			}
-			stek=Workers.get(index).getMash().size();
-		}*/
-
-		/*Operation stekOperation=new Operation();
-		stek=null;
-		for (int index=0; index<Operations.size();index++){
-			if ((stek!=null)&&(stek<Operations.get(index).getWeight())){
-				stekOperation=Operations.get(index-1);
-				Operations.set(index-1,Operations.get(index));
-				Operations.set(index, stekOperation);
-				index-=2;
-				if (index<0)index=0;
-			}
-			stek=Operations.get(index).getWeight();
-		}*/
+        for (Operation operation:operations) key.add(operation.getWeight());
+        Sort.arrayMultiSort(operations, key, true);
 		//распределяем задачи меж сотрудников 
         WorkersDuty();
         //расставляем работников по местам
@@ -507,27 +484,27 @@ public class Sheduler {
             try {
             	filePrintf(out,"Расписание составляется на период с %s по %s",
             			DateTrans(0),
-            			DateTrans(WorkTime-1));
+            			DateTrans(workTime-1));
             	filePrintf(out,"");
-                for (String R:Records){
-                	println(R);
-                	filePrintf(out,R);
+                for (String record:records){
+                	println(record);
+                	filePrintf(out,record);
                 }
                 println("Не выполнено:");
                 filePrintf(out,"-------------------------------------------------------------");
                 filePrintf(out,"Не выполнено:");
-                for(Operation Op:Operations){
-                	if (((Op.getStart()==null)||(Op.getStart()+Op.getTime())>WorkTime)){
+                for(Operation operation:operations){
+                	if (((operation.getStart()==null)||(operation.getStart()+operation.getTime())>workTime)){
                 		printfln("%s \tДолжно начаться %s \tСтоимость %sруб \tДлительность %sмин",
-                				Op.getId(),
-                				DateTrans(Op.getStart()),
-                				Op.getCost(),
-                				Op.getTime());
+                				operation.getId(),
+                				DateTrans(operation.getStart()),
+                				operation.getCost(),
+                				operation.getTime());
                 		filePrintf(out,"%s \tДолжно начаться %s \tСтоимость %sруб \tДлительность %sмин",
-                				Op.getId(),
-                				DateTrans(Op.getStart()),
-                				Op.getCost(),
-                				Op.getTime());
+                				operation.getId(),
+                				DateTrans(operation.getStart()),
+                				operation.getCost(),
+                				operation.getTime());
                 	}
                 }
             	
